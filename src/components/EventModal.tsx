@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CalendarEvent } from '@/types/calendar';
 import {
   Dialog,
@@ -8,8 +8,9 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ExternalLink, X } from 'lucide-react';
+import { ExternalLink, X, Pencil, Save } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import AdminConfirmModal from './AdminConfirmModal';
@@ -23,6 +24,7 @@ interface EventModalProps {
   onStatusChange: (status: string | null) => void;
   onSavePublicacao: (link: string) => void;
   onRemovePublicacao: () => void;
+  onSaveRoteiro: (roteiro: string) => void;
 }
 
 const statusLabels: Record<string, string> = {
@@ -41,6 +43,7 @@ const EventModal: React.FC<EventModalProps> = ({
   onStatusChange,
   onSavePublicacao,
   onRemovePublicacao,
+  onSaveRoteiro,
 }) => {
   const [showRoteiro, setShowRoteiro] = useState(false);
   const [showPublicacao, setShowPublicacao] = useState(false);
@@ -48,8 +51,25 @@ const EventModal: React.FC<EventModalProps> = ({
   const [showConfirmModalForAdd, setShowConfirmModalForAdd] = useState(false);
   const [showConfirmModalForRemove, setShowConfirmModalForRemove] = useState(false);
   const [pendingLink, setPendingLink] = useState('');
+  const [isEditingRoteiro, setIsEditingRoteiro] = useState(false);
+  const [roteiroInput, setRoteiroInput] = useState('');
   const { profile } = useAuth();
   const { toast } = useToast();
+
+  // Reset editing state when modal closes or event changes
+  useEffect(() => {
+    if (!open) {
+      setIsEditingRoteiro(false);
+      setShowRoteiro(false);
+      setShowPublicacao(false);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (event) {
+      setRoteiroInput(event.roteiro || '');
+    }
+  }, [event]);
 
   if (!event) return null;
 
@@ -120,6 +140,25 @@ const EventModal: React.FC<EventModalProps> = ({
   const toggleRoteiro = () => {
     setShowRoteiro(!showRoteiro);
     setShowPublicacao(false);
+    if (!showRoteiro) {
+      setIsEditingRoteiro(false);
+      setRoteiroInput(event.roteiro || '');
+    }
+  };
+
+  const handleEditRoteiro = () => {
+    setIsEditingRoteiro(true);
+    setRoteiroInput(event.roteiro || '');
+  };
+
+  const handleSaveRoteiro = () => {
+    onSaveRoteiro(roteiroInput);
+    setIsEditingRoteiro(false);
+  };
+
+  const handleCancelEditRoteiro = () => {
+    setIsEditingRoteiro(false);
+    setRoteiroInput(event.roteiro || '');
   };
 
   return (
@@ -231,14 +270,54 @@ const EventModal: React.FC<EventModalProps> = ({
               <ScrollArea className="flex-1 border-l border-border pl-6 max-h-[60vh]">
                 {showRoteiro && (
                   <div>
-                    <h3 className="text-lg font-display text-primary mb-4">Roteiro</h3>
-                    <div className="text-foreground/90 whitespace-pre-wrap leading-relaxed">
-                      {event.roteiro || (
-                        <span className="text-muted-foreground italic">
-                          Roteiro ainda não disponível para este evento.
-                        </span>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-display text-primary">Roteiro</h3>
+                      {!isEditingRoteiro ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleEditRoteiro}
+                          className="gap-2"
+                        >
+                          <Pencil className="w-4 h-4" />
+                          Editar
+                        </Button>
+                      ) : (
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleCancelEditRoteiro}
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleSaveRoteiro}
+                            className="gap-2"
+                          >
+                            <Save className="w-4 h-4" />
+                            Salvar
+                          </Button>
+                        </div>
                       )}
                     </div>
+                    {isEditingRoteiro ? (
+                      <Textarea
+                        value={roteiroInput}
+                        onChange={(e) => setRoteiroInput(e.target.value)}
+                        placeholder="Digite o roteiro aqui..."
+                        className="min-h-[300px] bg-muted"
+                      />
+                    ) : (
+                      <div className="text-foreground/90 whitespace-pre-wrap leading-relaxed">
+                        {event.roteiro || (
+                          <span className="text-muted-foreground italic">
+                            Roteiro ainda não disponível para este evento. Clique em "Editar" para adicionar.
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
 
