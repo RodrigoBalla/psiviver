@@ -235,6 +235,33 @@ export type Database = {
       }
     }
     Views: {
+      login_history_safe: {
+        Row: {
+          id: string | null
+          ip_address: string | null
+          login_at: string | null
+          logout_at: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string | null
+          ip_address?: never
+          login_at?: string | null
+          logout_at?: string | null
+          user_agent?: never
+          user_id?: string | null
+        }
+        Update: {
+          id?: string | null
+          ip_address?: never
+          login_at?: string | null
+          logout_at?: string | null
+          user_agent?: never
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles_masked: {
         Row: {
           created_at: string | null
@@ -267,6 +294,8 @@ export type Database = {
       }
     }
     Functions: {
+      anonymize_ip: { Args: { ip_address: string }; Returns: string }
+      cleanup_old_login_history: { Args: never; Returns: undefined }
       get_my_profile: {
         Args: never
         Returns: {
@@ -288,6 +317,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      simplify_user_agent: { Args: { user_agent: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
