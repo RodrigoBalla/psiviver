@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,7 +48,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center gradient-animated p-4">
+    <div className="min-h-screen flex items-center justify-center gradient-animated p-4 relative">
+      {/* Admin Button */}
+      <Link 
+        to="/admin" 
+        className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm border border-border rounded-lg text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg"
+      >
+        <Shield className="w-4 h-4" />
+        <span className="text-sm font-semibold">Admin</span>
+      </Link>
+
       <Card className={`w-full max-w-md animate-fade-in ${shake ? 'animate-shake' : ''}`}>
         <CardHeader className="text-center">
           <h1 className="text-3xl font-display font-bold text-primary animate-glow tracking-widest">
