@@ -214,6 +214,8 @@ export const AdminUserAnalysis: React.FC<AdminUserAnalysisProps> = ({
                 <TableRow className="border-zinc-800 hover:bg-transparent">
                   <TableHead className="text-yellow-500 text-xs">#</TableHead>
                   <TableHead className="text-yellow-500 text-xs">Usuário</TableHead>
+                  <TableHead className="text-yellow-500 text-xs">Email</TableHead>
+                  <TableHead className="text-yellow-500 text-xs">Telefone</TableHead>
                   <TableHead className="text-yellow-500 text-xs">Acessos</TableHead>
                   <TableHead className="text-yellow-500 text-xs">Tempo Total</TableHead>
                   <TableHead className="text-yellow-500 text-xs">Cliques</TableHead>
@@ -238,6 +240,12 @@ export const AdminUserAnalysis: React.FC<AdminUserAnalysisProps> = ({
                     </TableCell>
                     <TableCell className="text-zinc-100 font-medium">
                       {user.name}
+                    </TableCell>
+                    <TableCell className="text-zinc-400 text-xs">
+                      {user.email || '-'}
+                    </TableCell>
+                    <TableCell className="text-zinc-400 text-xs">
+                      {user.phone || '-'}
                     </TableCell>
                     <TableCell className="text-yellow-400 font-bold">
                       {user.logins}
