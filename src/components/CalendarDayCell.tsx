@@ -1,6 +1,7 @@
 import React from 'react';
 import { CalendarEvent } from '@/types/calendar';
 import { Input } from '@/components/ui/input';
+import { Plus } from 'lucide-react';
 
 interface CalendarDayCellProps {
   day: number;
@@ -8,6 +9,7 @@ interface CalendarDayCellProps {
   gravador: string;
   onGravadorChange: (value: string) => void;
   onEventClick: (index: number) => void;
+  onAddEvent: () => void;
 }
 
 const statusClasses: Record<string, string> = {
@@ -30,11 +32,24 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   gravador,
   onGravadorChange,
   onEventClick,
+  onAddEvent,
 }) => {
   return (
     <div className="bg-muted rounded-lg min-h-[140px] p-3 border-2 border-transparent hover:border-primary transition-all duration-300 hover:-translate-y-1">
-      <div className="font-bold text-lg mb-2 text-primary">
-        {String(day).padStart(2, '0')}/02/26
+      <div className="flex justify-between items-start mb-2">
+        <div className="font-bold text-lg text-primary">
+          {String(day).padStart(2, '0')}/02/26
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddEvent();
+          }}
+          className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 transition-colors"
+          title="Adicionar novo evento"
+        >
+          <Plus className="w-4 h-4" />
+        </button>
       </div>
 
       <Input
@@ -52,7 +67,7 @@ const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
           className={`
             rounded-md p-2 mb-2 cursor-pointer transition-all duration-300
             hover:scale-[1.02] hover:shadow-lg
-            ${event.status ? statusClasses[event.status] : 'bg-white text-foreground'}
+            ${event.status ? statusClasses[event.status] : 'bg-white text-zinc-900'}
           `}
         >
           <div className="inline-block px-2 py-0.5 rounded text-xs font-bold uppercase mb-1 bg-black/20">
