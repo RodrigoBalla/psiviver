@@ -8,31 +8,26 @@ import { Users, Wifi, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-// Map hash to readable tab names
-const TAB_LABELS: Record<string, string> = {
-  '#calendario': 'Calendário',
-  '#rotina': 'Rotina',
-  '#stories': 'Stories',
-  '#orientacoes': 'Orientações',
+// Map hash to display paths
+const TAB_PATHS: Record<string, string> = {
+  '#calendario': '/calendário',
+  '#rotina': '/rotina',
+  '#stories': '/pautasstories',
+  '#orientacoes': '/Orientações',
 };
 
 const formatPagePath = (path: string): string => {
-  // Check if path has a hash
+  // Check if path has a hash (dashboard tab)
   const hashIndex = path.indexOf('#');
   if (hashIndex > -1) {
-    const basePath = path.substring(0, hashIndex);
     const hash = path.substring(hashIndex);
-    const tabLabel = TAB_LABELS[hash] || hash.replace('#', '');
-    
-    // Format base path
-    let formattedBase = basePath === '/dashboard' ? 'Dashboard' : basePath === '/' ? 'Home' : basePath.replace('/', '');
-    return `${formattedBase} → ${tabLabel}`;
+    return TAB_PATHS[hash] || hash.replace('#', '/');
   }
   
   // No hash, format normally
-  if (path === '/') return 'Home';
-  if (path === '/dashboard') return 'Dashboard';
-  return path.replace('/', '').charAt(0).toUpperCase() + path.slice(2);
+  if (path === '/') return '/home';
+  if (path === '/dashboard') return '/dashboard';
+  return path;
 };
 
 interface OnlineUser {
