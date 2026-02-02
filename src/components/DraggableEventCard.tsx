@@ -11,33 +11,21 @@ interface DraggableEventCardProps {
   onDeleteEvent: (index: number) => void;
 }
 
-// Platform-based colors matching the reference image
-const platformColors: Record<string, string> = {
-  'Instagram': 'bg-emerald-700 text-white',
-  'YouTube': 'bg-red-600 text-white',
-  'TikTok': 'bg-zinc-800 text-white',
-  'Facebook': 'bg-blue-600 text-white',
-  'LinkedIn': 'bg-blue-800 text-white',
-  'Twitter/X': 'bg-zinc-700 text-white',
-  'Blog': 'bg-purple-700 text-white',
-  'Podcast': 'bg-orange-600 text-white',
-  'Newsletter': 'bg-cyan-700 text-white',
-  'Tarefa': 'bg-amber-400 text-zinc-900',
-  'Outro': 'bg-zinc-600 text-white',
+// Status-based colors
+const statusColors: Record<string, string> = {
+  'revisado': 'bg-blue-600 text-white',
+  'producao': 'bg-orange-500 text-white',
+  'pronto': 'bg-yellow-400 text-zinc-900',
+  'publicado': 'bg-green-500 text-white',
 };
+
+const defaultColor = 'bg-zinc-600 text-white'; // Sem status
 
 const statusLabels: Record<string, string> = {
   revisado: 'REVISADO',
   producao: 'EM PRODUÇÃO',
   pronto: 'PRONTO',
   publicado: 'PUBLICADO',
-};
-
-const statusTextColors: Record<string, string> = {
-  revisado: 'text-blue-300',
-  producao: 'text-orange-300',
-  pronto: 'text-yellow-300',
-  publicado: 'text-green-300',
 };
 
 const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
@@ -66,9 +54,7 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
     transition,
   };
 
-  const cardColor = platformColors[event.platform] || 'bg-zinc-600 text-white';
-  const isTarefa = event.platform === 'Tarefa';
-
+  const cardColor = event.status ? statusColors[event.status] || defaultColor : defaultColor;
   return (
     <div
       ref={setNodeRef}
@@ -91,10 +77,7 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
 
       <div onClick={() => onEventClick(index)} className="space-y-1">
         {/* Platform badge */}
-        <div className={`
-          inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide
-          ${isTarefa ? 'bg-amber-500/30 text-amber-900' : 'bg-black/20'}
-        `}>
+        <div className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-black/20">
           {event.platform}
         </div>
         
@@ -103,11 +86,9 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
           {event.title}
         </div>
         
-        {/* Status badge */}
+        {/* Status label */}
         {event.status && (
-          <div className={`text-[10px] font-bold uppercase tracking-wide mt-1 ${
-            isTarefa ? 'text-amber-800' : statusTextColors[event.status] || 'text-white/80'
-          }`}>
+          <div className="text-[10px] font-bold uppercase tracking-wide mt-1 opacity-80">
             {statusLabels[event.status]}
           </div>
         )}
