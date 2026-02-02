@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Shield, ArrowLeft } from 'lucide-react';
+import { Shield, ArrowLeft, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,10 +13,18 @@ const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [shake, setShake] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, profile, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // If user is already logged in as admin, redirect to analytics
+  useEffect(() => {
+    if (profile?.is_admin) {
+      navigate('/admin-analytics');
+    }
+  }, [profile, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,9 +40,9 @@ const AdminLogin = () => {
 
     setLoading(true);
     const { error } = await signIn(email, password);
-    setLoading(false);
-
+    
     if (error) {
+      setLoading(false);
       setShake(true);
       setTimeout(() => setShake(false), 500);
       
@@ -42,9 +51,53 @@ const AdminLogin = () => {
         description: "Email ou senha incorretos!",
         variant: "destructive",
       });
-    } else {
-      navigate('/admin-analytics');
+      return;
     }
+
+    // Login successful, now verify admin status
+    setVerifying(true);
+    
+    // Wait a moment for auth state to update, then check admin status
+    setTimeout(async () => {
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        
+        if (currentUser) {
+          // Fetch profile directly to check admin status
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('is_admin')
+            .eq('user_id', currentUser.id)
+            .single();
+
+          if (profileError) {
+            throw profileError;
+          }
+
+          if (profileData?.is_admin) {
+            navigate('/admin-analytics');
+          } else {
+            // Not an admin, sign out and show error
+            await supabase.auth.signOut();
+            toast({
+              title: "Acesso Negado",
+              description: "Esta conta não possui permissões de administrador.",
+              variant: "destructive",
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Error verifying admin status:', err);
+        toast({
+          title: "Erro",
+          description: "Erro ao verificar permissões. Tente novamente.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+        setVerifying(false);
+      }
+    }, 500);
   };
 
   return (
@@ -85,6 +138,7 @@ const AdminLogin = () => {
                 placeholder="admin@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading || verifying}
                 className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus:border-yellow-500 focus:ring-yellow-500/20"
               />
             </div>
@@ -99,6 +153,7 @@ const AdminLogin = () => {
                 placeholder="Sua senha de administrador"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading || verifying}
                 className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 focus:border-yellow-500 focus:ring-yellow-500/20"
               />
             </div>
@@ -107,9 +162,16 @@ const AdminLogin = () => {
               type="submit"
               className="w-full mt-6 bg-yellow-500 text-zinc-950 hover:bg-yellow-400 font-bold"
               size="lg"
-              disabled={loading}
+              disabled={loading || verifying}
             >
-              {loading ? 'Entrando...' : 'ACESSAR PAINEL'}
+              {loading || verifying ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {verifying ? 'Verificando permissões...' : 'Entrando...'}
+                </span>
+              ) : (
+                'ACESSAR PAINEL'
+              )}
             </Button>
           </form>
 

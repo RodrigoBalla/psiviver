@@ -37,10 +37,18 @@ const AdminAnalytics = () => {
   useEffect(() => {
     if (authLoading) return;
     
-    if (!profile?.is_admin) {
-      navigate('/');
+    // Only redirect if we know the user is not admin (profile loaded but not admin)
+    // If profile is null but user is logged in, wait for profile to load
+    if (profile === null) {
+      // Still loading profile, wait
       return;
     }
+    
+    if (!profile.is_admin) {
+      navigate('/admin-login');
+      return;
+    }
+    
     loadAllData();
   }, [profile, authLoading, navigate]);
 
