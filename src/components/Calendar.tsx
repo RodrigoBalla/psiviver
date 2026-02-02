@@ -196,8 +196,23 @@ const Calendar = () => {
 
   const createNewEvent = async (eventData: { platform: string; title: string }) => {
     const day = newEventDay;
-    const existingEvents = events[day] || [];
-    const eventIndex = existingEvents.length;
+    
+    // Fetch the current max event_index from the database to avoid conflicts
+    const { data: existingEvents, error: fetchError } = await supabase
+      .from('calendar_events')
+      .select('event_index')
+      .eq('day', day)
+      .order('event_index', { ascending: false })
+      .limit(1);
+
+    if (fetchError) {
+      console.error('Error fetching events:', fetchError);
+      toast({ title: 'Erro', description: 'Erro ao criar evento', variant: 'destructive' });
+      return;
+    }
+
+    const maxIndex = existingEvents && existingEvents.length > 0 ? existingEvents[0].event_index : -1;
+    const eventIndex = maxIndex + 1;
 
     const newEvent = {
       day,
@@ -214,6 +229,7 @@ const Calendar = () => {
       .single();
 
     if (error) {
+      console.error('Error creating event:', error);
       toast({ title: 'Erro', description: 'Erro ao criar evento', variant: 'destructive' });
       return;
     }
