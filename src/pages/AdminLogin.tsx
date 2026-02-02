@@ -43,7 +43,7 @@ const AdminLogin = () => {
         variant: "destructive",
       });
     } else {
-      navigate('/admin');
+      navigate('/admin-analytics');
     }
   };
 
