@@ -37,25 +37,53 @@ const Calendar = () => {
 
     // Subscribe to realtime changes for calendar_events
     const eventsChannel = supabase
-      .channel('calendar-events-changes')
+      .channel('calendar-events-realtime')
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'calendar_events',
         },
         (payload) => {
-          console.log('Realtime event received:', payload);
-          // Reload all events on any change
+          console.log('Realtime INSERT event:', payload);
           loadEvents();
         }
       )
-      .subscribe();
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'calendar_events',
+        },
+        (payload) => {
+          console.log('Realtime UPDATE event:', payload);
+          loadEvents();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'calendar_events',
+        },
+        (payload) => {
+          console.log('Realtime DELETE event:', payload);
+          loadEvents();
+        }
+      )
+      .subscribe((status, err) => {
+        console.log('Events channel status:', status, err);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to calendar_events realtime');
+        }
+      });
 
     // Subscribe to realtime changes for calendar_gravadores
     const gravadoresChannel = supabase
-      .channel('calendar-gravadores-changes')
+      .channel('calendar-gravadores-realtime')
       .on(
         'postgres_changes',
         {
@@ -65,11 +93,12 @@ const Calendar = () => {
         },
         (payload) => {
           console.log('Realtime gravador received:', payload);
-          // Reload all gravadores on any change
           loadGravadores();
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        console.log('Gravadores channel status:', status, err);
+      });
 
     // Cleanup subscriptions on unmount
     return () => {
