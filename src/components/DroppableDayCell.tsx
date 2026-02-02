@@ -50,10 +50,13 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
+            e.preventDefault();
+            console.log('Add event clicked for day:', day);
             onAddEvent();
           }}
           className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 transition-colors opacity-60 hover:opacity-100"
           title="Adicionar novo evento"
+          type="button"
         >
           <Plus className="w-3 h-3" />
         </button>
