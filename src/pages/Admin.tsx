@@ -62,8 +62,9 @@ const Admin = () => {
   };
 
   const loadProfiles = async () => {
+    // Use masked view to protect sensitive data (emails and phones are masked)
     const { data, error } = await supabase
-      .from('profiles')
+      .from('profiles_masked')
       .select('*')
       .order('created_at', { ascending: false });
     
