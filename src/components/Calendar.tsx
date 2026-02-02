@@ -376,6 +376,39 @@ const Calendar = () => {
     toast({ title: 'Sucesso', description: 'Link removido com sucesso!' });
   };
 
+  const saveRoteiro = async (roteiro: string) => {
+    if (!selectedEvent) return;
+
+    const event = events[selectedEvent.day]?.[selectedEvent.index];
+    if (!event || !event.id) return;
+
+    trackButtonClick('save-roteiro', 'Salvar Roteiro');
+
+    const { error } = await supabase
+      .from('calendar_events')
+      .update({ roteiro })
+      .eq('id', event.id);
+
+    if (error) {
+      toast({ title: 'Erro', description: 'Erro ao salvar roteiro', variant: 'destructive' });
+      return;
+    }
+
+    setEvents((prev) => {
+      const newEvents = { ...prev };
+      if (newEvents[selectedEvent.day]) {
+        newEvents[selectedEvent.day] = [...newEvents[selectedEvent.day]];
+        newEvents[selectedEvent.day][selectedEvent.index] = {
+          ...newEvents[selectedEvent.day][selectedEvent.index],
+          roteiro,
+        };
+      }
+      return newEvents;
+    });
+
+    toast({ title: 'Sucesso', description: 'Roteiro salvo com sucesso!' });
+  };
+
   // Generate calendar grid
   const firstDay = new Date(2026, 1, 1).getDay(); // February 2026
   const daysInMonth = 28;
@@ -453,6 +486,7 @@ const Calendar = () => {
         onStatusChange={updateEventStatus}
         onSavePublicacao={savePublicacao}
         onRemovePublicacao={removePublicacao}
+        onSaveRoteiro={saveRoteiro}
       />
 
       {/* New Event Modal */}
