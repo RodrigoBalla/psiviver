@@ -8,6 +8,7 @@ import { AdminFilters } from '@/components/admin/AdminFilters';
 import { AdminOverviewCards } from '@/components/admin/AdminOverviewCards';
 import { AdminBehaviorCharts } from '@/components/admin/AdminBehaviorCharts';
 import { AdminUserAnalysis } from '@/components/admin/AdminUserAnalysis';
+import { AdminOnlineUsers } from '@/components/admin/AdminOnlineUsers';
 import { RefreshCw } from 'lucide-react';
 import { format, subDays, isWithinInterval, parseISO } from 'date-fns';
 
@@ -64,8 +65,9 @@ const AdminAnalytics = () => {
   };
 
   const loadProfiles = async () => {
+    // Admins can access full profiles table via RLS
     const { data, error } = await supabase
-      .from('profiles_masked')
+      .from('profiles')
       .select('*')
       .order('created_at', { ascending: false });
     
@@ -212,13 +214,20 @@ const AdminAnalytics = () => {
       <AdminHeader onRefresh={loadAllData} />
       
       <main className="max-w-[1800px] mx-auto px-4 py-6">
-        <AdminFilters
-          filters={filters}
-          setFilters={setFilters}
-          profiles={profiles}
-          uniquePages={uniquePages}
-          userActivityRanking={userActivityRanking}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
+          <div className="lg:col-span-3">
+            <AdminFilters
+              filters={filters}
+              setFilters={setFilters}
+              profiles={profiles}
+              uniquePages={uniquePages}
+              userActivityRanking={userActivityRanking}
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <AdminOnlineUsers profiles={profiles} />
+          </div>
+        </div>
 
         <AdminOverviewCards
           profiles={profiles}
