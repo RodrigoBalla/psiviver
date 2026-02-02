@@ -64,9 +64,8 @@ export const useOnlinePresence = () => {
     }
   }, [location.pathname]);
 
-  // Single effect for channel management
+  // Effect for channel creation (only on mount/user change)
   useEffect(() => {
-    // If no user, cleanup and exit
     if (!user) {
       if (channelRef.current) {
         channelRef.current.untrack();
@@ -77,7 +76,7 @@ export const useOnlinePresence = () => {
       return;
     }
 
-    // Create channel if not exists
+    // Only create channel if not exists
     if (!channelRef.current) {
       onlineSinceRef.current = new Date().toISOString();
       
@@ -92,25 +91,9 @@ export const useOnlinePresence = () => {
       channel.subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
           isSubscribed.current = true;
-          await channel.track({
-            user_id: user.id,
-            name: profile?.name || user.email?.split('@')[0] || 'Usuário',
-            email: profile?.email || user.email,
-            currentPage: currentPage,
-            onlineSince: onlineSinceRef.current,
-          });
         } else if (status === 'CLOSED' || status === 'TIMED_OUT') {
           isSubscribed.current = false;
         }
-      });
-    } else if (isSubscribed.current) {
-      // Update presence when page or profile changes
-      channelRef.current.track({
-        user_id: user.id,
-        name: profile?.name || user.email?.split('@')[0] || 'Usuário',
-        email: profile?.email || user.email,
-        currentPage: currentPage,
-        onlineSince: onlineSinceRef.current,
       });
     }
 
@@ -123,5 +106,20 @@ export const useOnlinePresence = () => {
         isSubscribed.current = false;
       }
     };
+  }, [user]);
+
+  // Separate effect to update presence when currentPage changes
+  useEffect(() => {
+    if (!user || !channelRef.current || !isSubscribed.current) return;
+
+    console.log('[useOnlinePresence] Updating presence to:', currentPage);
+    
+    channelRef.current.track({
+      user_id: user.id,
+      name: profile?.name || user.email?.split('@')[0] || 'Usuário',
+      email: profile?.email || user.email,
+      currentPage: currentPage,
+      onlineSince: onlineSinceRef.current,
+    });
   }, [user, profile?.name, profile?.email, currentPage]);
 };
