@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+} from '@dnd-kit/core';
 import { supabase } from '@/integrations/supabase/client';
 import { CalendarEvent } from '@/types/calendar';
 import { defaultEvents } from '@/data/calendarData';
 import { useToast } from '@/hooks/use-toast';
 import { useTracking } from '@/hooks/useTracking';
 import { useAuth } from '@/contexts/AuthContext';
-import CalendarDayCell from './CalendarDayCell';
+import DroppableDayCell from './DroppableDayCell';
 import EventModal from './EventModal';
 import NewEventModal from './NewEventModal';
 import AdminConfirmModal from './AdminConfirmModal';
@@ -26,9 +36,18 @@ const Calendar = () => {
   const [newEventDay, setNewEventDay] = useState<number>(1);
   const [deleteConfirmModalOpen, setDeleteConfirmModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<{ day: number; index: number } | null>(null);
+  const [activeEvent, setActiveEvent] = useState<CalendarEvent | null>(null);
   const { toast } = useToast();
   const { user, profile } = useAuth();
   const { trackButtonClick } = useTracking(user?.id);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   // Load events from database
   useEffect(() => {
@@ -45,10 +64,7 @@ const Calendar = () => {
           schema: 'public',
           table: 'calendar_events',
         },
-        (payload) => {
-          console.log('Realtime INSERT event:', payload);
-          loadEvents();
-        }
+        () => loadEvents()
       )
       .on(
         'postgres_changes',
@@ -57,10 +73,7 @@ const Calendar = () => {
           schema: 'public',
           table: 'calendar_events',
         },
-        (payload) => {
-          console.log('Realtime UPDATE event:', payload);
-          loadEvents();
-        }
+        () => loadEvents()
       )
       .on(
         'postgres_changes',
@@ -69,17 +82,9 @@ const Calendar = () => {
           schema: 'public',
           table: 'calendar_events',
         },
-        (payload) => {
-          console.log('Realtime DELETE event:', payload);
-          loadEvents();
-        }
+        () => loadEvents()
       )
-      .subscribe((status, err) => {
-        console.log('Events channel status:', status, err);
-        if (status === 'SUBSCRIBED') {
-          console.log('Successfully subscribed to calendar_events realtime');
-        }
-      });
+      .subscribe();
 
     // Subscribe to realtime changes for calendar_gravadores
     const gravadoresChannel = supabase
@@ -91,16 +96,10 @@ const Calendar = () => {
           schema: 'public',
           table: 'calendar_gravadores',
         },
-        (payload) => {
-          console.log('Realtime gravador received:', payload);
-          loadGravadores();
-        }
+        () => loadGravadores()
       )
-      .subscribe((status, err) => {
-        console.log('Gravadores channel status:', status, err);
-      });
+      .subscribe();
 
-    // Cleanup subscriptions on unmount
     return () => {
       supabase.removeChannel(eventsChannel);
       supabase.removeChannel(gravadoresChannel);
@@ -112,7 +111,6 @@ const Calendar = () => {
     
     if (error) {
       console.error('Error loading events:', error);
-      // Use default events if database is empty
       initializeDefaultEvents();
       return;
     }
@@ -125,7 +123,6 @@ const Calendar = () => {
         }
         groupedEvents[event.day].push(event as CalendarEvent);
       });
-      // Sort events by event_index within each day
       Object.keys(groupedEvents).forEach((day) => {
         groupedEvents[Number(day)].sort((a, b) => a.event_index - b.event_index);
       });
@@ -234,7 +231,6 @@ const Calendar = () => {
   };
 
   const openDeleteModal = (day: number, index: number) => {
-    // Check if user is admin before opening delete modal
     if (!profile?.is_admin) {
       toast({ 
         title: 'Acesso Negado', 
@@ -409,6 +405,97 @@ const Calendar = () => {
     toast({ title: 'Sucesso', description: 'Roteiro salvo com sucesso!' });
   };
 
+  // Handle drag start
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const eventData = active.data.current?.event as CalendarEvent | undefined;
+    if (eventData) {
+      setActiveEvent(eventData);
+    }
+  };
+
+  // Handle drag end - move event between days
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveEvent(null);
+
+    if (!over) return;
+
+    const activeData = active.data.current;
+    const overData = over.data.current;
+    
+    if (!activeData?.event) return;
+
+    const draggedEvent = activeData.event as CalendarEvent;
+    const sourceDay = draggedEvent.day;
+    
+    // Determine target day
+    let targetDay: number;
+    
+    if (over.id.toString().startsWith('day-')) {
+      // Dropped on a day cell
+      targetDay = parseInt(over.id.toString().replace('day-', ''));
+    } else if (overData?.event) {
+      // Dropped on another event
+      targetDay = (overData.event as CalendarEvent).day;
+    } else {
+      return;
+    }
+
+    // If same day, just reorder (handled by sortable context)
+    if (sourceDay === targetDay) {
+      return;
+    }
+
+    // Move to different day
+    if (!draggedEvent.id) return;
+
+    trackButtonClick('move-event', `Mover: ${draggedEvent.title} para dia ${targetDay}`);
+
+    const targetEvents = events[targetDay] || [];
+    const newEventIndex = targetEvents.length;
+
+    // Update in database
+    const { error } = await supabase
+      .from('calendar_events')
+      .update({ 
+        day: targetDay, 
+        event_index: newEventIndex 
+      })
+      .eq('id', draggedEvent.id);
+
+    if (error) {
+      toast({ title: 'Erro', description: 'Erro ao mover evento', variant: 'destructive' });
+      return;
+    }
+
+    // Update local state
+    setEvents((prev) => {
+      const newEvents = { ...prev };
+      
+      // Remove from source day
+      if (newEvents[sourceDay]) {
+        newEvents[sourceDay] = newEvents[sourceDay].filter(e => e.id !== draggedEvent.id);
+      }
+      
+      // Add to target day
+      if (!newEvents[targetDay]) {
+        newEvents[targetDay] = [];
+      }
+      newEvents[targetDay] = [
+        ...newEvents[targetDay],
+        { ...draggedEvent, day: targetDay, event_index: newEventIndex }
+      ];
+      
+      return newEvents;
+    });
+
+    toast({ 
+      title: 'Evento Movido', 
+      description: `"${draggedEvent.title}" movido para dia ${String(targetDay).padStart(2, '0')}/02` 
+    });
+  };
+
   // Generate calendar grid
   const firstDay = new Date(2026, 1, 1).getDay(); // February 2026
   const daysInMonth = 28;
@@ -420,97 +507,119 @@ const Calendar = () => {
   };
 
   return (
-    <div>
-      <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
-        {/* Header */}
-        <div className="hidden md:grid grid-cols-7 gap-4 mb-4">
-          {dayNames.map((name) => (
-            <div
-              key={name}
-              className="text-center font-bold text-primary uppercase tracking-wider text-sm py-3"
-            >
-              {name}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div>
+        <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
+          {/* Header */}
+          <div className="hidden md:grid grid-cols-7 gap-4 mb-4">
+            {dayNames.map((name) => (
+              <div
+                key={name}
+                className="text-center font-bold text-primary uppercase tracking-wider text-sm py-3"
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+
+          {/* Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-5">
+            {/* Empty cells */}
+            {Array.from({ length: firstDay }).map((_, i) => (
+              <div key={`empty-${i}`} className="hidden md:block min-h-[180px] opacity-30" />
+            ))}
+
+            {/* Days */}
+            {Array.from({ length: daysInMonth }).map((_, i) => {
+              const day = i + 1;
+              return (
+                <DroppableDayCell
+                  key={day}
+                  day={day}
+                  events={events[day] || []}
+                  gravador={gravadores[day] || ''}
+                  onGravadorChange={(value) => updateGravador(day, value)}
+                  onEventClick={(index) => openModal(day, index)}
+                  onAddEvent={() => openNewEventModal(day)}
+                  onDeleteEvent={(index) => openDeleteModal(day, index)}
+                />
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="mt-8 p-4 bg-muted rounded-lg flex flex-wrap gap-4">
+            {[
+              { status: null, label: 'Sem Status', color: 'bg-white' },
+              { status: 'revisado', label: 'Revisado', color: 'bg-psiviver-azul' },
+              { status: 'producao', label: 'Em Produção', color: 'bg-psiviver-laranja' },
+              { status: 'pronto', label: 'Pronto', color: 'bg-psiviver-amarelo' },
+              { status: 'publicado', label: 'Publicado', color: 'bg-psiviver-verde' },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-2">
+                <div className={`w-6 h-6 rounded ${item.color}`} />
+                <span className="text-sm text-foreground">{item.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Drag instruction */}
+          <div className="mt-4 text-center text-muted-foreground text-sm">
+            💡 Arraste os eventos pelo ícone ⠿ para mover entre dias
+          </div>
+        </div>
+
+        {/* Drag Overlay */}
+        <DragOverlay>
+          {activeEvent && (
+            <div className="rounded-md p-3 shadow-2xl bg-primary text-primary-foreground opacity-90 max-w-[200px]">
+              <div className="text-xs font-bold uppercase mb-1">{activeEvent.platform}</div>
+              <div className="text-sm font-semibold">{activeEvent.title}</div>
             </div>
-          ))}
-        </div>
+          )}
+        </DragOverlay>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-          {/* Empty cells */}
-          {Array.from({ length: firstDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="hidden md:block min-h-[140px] opacity-30" />
-          ))}
+        {/* Event Modal */}
+        <EventModal
+          open={modalOpen}
+          onClose={closeModal}
+          event={getSelectedEventData()}
+          day={selectedEvent?.day || 0}
+          gravador={gravadores[selectedEvent?.day || 0]}
+          onStatusChange={updateEventStatus}
+          onSavePublicacao={savePublicacao}
+          onRemovePublicacao={removePublicacao}
+          onSaveRoteiro={saveRoteiro}
+        />
 
-          {/* Days */}
-          {Array.from({ length: daysInMonth }).map((_, i) => {
-            const day = i + 1;
-            return (
-              <CalendarDayCell
-                key={day}
-                day={day}
-                events={events[day] || []}
-                gravador={gravadores[day] || ''}
-                onGravadorChange={(value) => updateGravador(day, value)}
-                onEventClick={(index) => openModal(day, index)}
-                onAddEvent={() => openNewEventModal(day)}
-                onDeleteEvent={(index) => openDeleteModal(day, index)}
-              />
-            );
-          })}
-        </div>
+        {/* New Event Modal */}
+        <NewEventModal
+          open={newEventModalOpen}
+          onClose={closeNewEventModal}
+          day={newEventDay}
+          onSave={createNewEvent}
+        />
 
-        {/* Legend */}
-        <div className="mt-8 p-4 bg-muted rounded-lg flex flex-wrap gap-4">
-          {[
-            { status: null, label: 'Sem Status', color: 'bg-white' },
-            { status: 'revisado', label: 'Revisado', color: 'bg-psiviver-azul' },
-            { status: 'producao', label: 'Em Produção', color: 'bg-psiviver-laranja' },
-            { status: 'pronto', label: 'Pronto', color: 'bg-psiviver-amarelo' },
-            { status: 'publicado', label: 'Publicado', color: 'bg-psiviver-verde' },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center gap-2">
-              <div className={`w-6 h-6 rounded ${item.color}`} />
-              <span className="text-sm text-foreground">{item.label}</span>
-            </div>
-          ))}
-        </div>
+        {/* Delete Confirm Modal */}
+        <AdminConfirmModal
+          open={deleteConfirmModalOpen}
+          onClose={() => {
+            setDeleteConfirmModalOpen(false);
+            setEventToDelete(null);
+          }}
+          onConfirm={deleteEvent}
+          title="Excluir Evento"
+          description="Tem certeza que deseja excluir este evento? Esta ação não pode ser desfeita."
+          confirmLabel="Excluir"
+          variant="destructive"
+        />
       </div>
-
-      {/* Event Modal */}
-      <EventModal
-        open={modalOpen}
-        onClose={closeModal}
-        event={getSelectedEventData()}
-        day={selectedEvent?.day || 0}
-        gravador={gravadores[selectedEvent?.day || 0]}
-        onStatusChange={updateEventStatus}
-        onSavePublicacao={savePublicacao}
-        onRemovePublicacao={removePublicacao}
-        onSaveRoteiro={saveRoteiro}
-      />
-
-      {/* New Event Modal */}
-      <NewEventModal
-        open={newEventModalOpen}
-        onClose={closeNewEventModal}
-        day={newEventDay}
-        onSave={createNewEvent}
-      />
-
-      {/* Delete Confirm Modal */}
-      <AdminConfirmModal
-        open={deleteConfirmModalOpen}
-        onClose={() => {
-          setDeleteConfirmModalOpen(false);
-          setEventToDelete(null);
-        }}
-        onConfirm={deleteEvent}
-        title="Excluir Evento"
-        description="Tem certeza que deseja excluir este evento? Esta ação não pode ser desfeita."
-        confirmLabel="Excluir"
-        variant="destructive"
-      />
-    </div>
+    </DndContext>
   );
 };
 
