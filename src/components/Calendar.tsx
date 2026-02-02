@@ -514,13 +514,14 @@ const Calendar = () => {
       onDragEnd={handleDragEnd}
     >
       <div>
-        <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
-          {/* Header */}
-          <div className="hidden md:grid grid-cols-7 gap-4 mb-4">
+        {/* Calendar container with purple border */}
+        <div className="bg-zinc-950 rounded-xl p-4 md:p-5 shadow-2xl border-2 border-purple-600/60">
+          {/* Header - Day names */}
+          <div className="hidden md:grid grid-cols-7 gap-2 mb-3">
             {dayNames.map((name) => (
               <div
                 key={name}
-                className="text-center font-bold text-primary uppercase tracking-wider text-sm py-3"
+                className="text-center font-bold text-zinc-400 uppercase tracking-widest text-xs py-2"
               >
                 {name}
               </div>
@@ -528,10 +529,10 @@ const Calendar = () => {
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-5">
-            {/* Empty cells */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 gap-2">
+            {/* Empty cells for first week alignment */}
             {Array.from({ length: firstDay }).map((_, i) => (
-              <div key={`empty-${i}`} className="hidden md:block min-h-[180px] opacity-30" />
+              <div key={`empty-${i}`} className="hidden md:block min-h-[200px]" />
             ))}
 
             {/* Days */}
@@ -553,32 +554,35 @@ const Calendar = () => {
           </div>
 
           {/* Legend */}
-          <div className="mt-8 p-4 bg-muted rounded-lg flex flex-wrap gap-4">
-            {[
-              { status: null, label: 'Sem Status', color: 'bg-white' },
-              { status: 'revisado', label: 'Revisado', color: 'bg-psiviver-azul' },
-              { status: 'producao', label: 'Em Produção', color: 'bg-psiviver-laranja' },
-              { status: 'pronto', label: 'Pronto', color: 'bg-psiviver-amarelo' },
-              { status: 'publicado', label: 'Publicado', color: 'bg-psiviver-verde' },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-2">
-                <div className={`w-6 h-6 rounded ${item.color}`} />
-                <span className="text-sm text-foreground">{item.label}</span>
-              </div>
-            ))}
+          <div className="mt-6 p-3 bg-zinc-900 rounded-lg">
+            <div className="text-xs text-zinc-500 uppercase tracking-wide mb-2">Legenda por Plataforma:</div>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { platform: 'Instagram', color: 'bg-emerald-700' },
+                { platform: 'LinkedIn', color: 'bg-blue-800' },
+                { platform: 'Tarefa', color: 'bg-amber-400' },
+                { platform: 'YouTube', color: 'bg-red-600' },
+                { platform: 'Outro', color: 'bg-zinc-600' },
+              ].map((item) => (
+                <div key={item.platform} className="flex items-center gap-1.5">
+                  <div className={`w-4 h-4 rounded ${item.color}`} />
+                  <span className="text-xs text-zinc-400">{item.platform}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Drag instruction */}
-          <div className="mt-4 text-center text-muted-foreground text-sm">
-            💡 Arraste os eventos pelo ícone ⠿ para mover entre dias
+          <div className="mt-3 text-center text-zinc-600 text-xs">
+            💡 Arraste os eventos para reorganizar entre dias
           </div>
         </div>
 
         {/* Drag Overlay */}
         <DragOverlay>
           {activeEvent && (
-            <div className="rounded-md p-3 shadow-2xl bg-primary text-primary-foreground opacity-90 max-w-[200px]">
-              <div className="text-xs font-bold uppercase mb-1">{activeEvent.platform}</div>
+            <div className="rounded-md p-3 shadow-2xl bg-teal-600 text-white opacity-95 max-w-[180px]">
+              <div className="text-[10px] font-bold uppercase mb-1">{activeEvent.platform}</div>
               <div className="text-sm font-semibold">{activeEvent.title}</div>
             </div>
           )}
