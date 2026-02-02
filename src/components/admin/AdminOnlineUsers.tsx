@@ -8,25 +8,29 @@ import { Users, Wifi, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-// Map hash to display paths
+// Map hash to display paths - keys without #
 const TAB_PATHS: Record<string, string> = {
-  '#calendario': '/calendário',
-  '#rotina': '/rotina',
-  '#stories': '/pautasstories',
-  '#orientacoes': '/Orientações',
+  'calendario': '/calendário',
+  'rotina': '/rotina',
+  'stories': '/pautasstories',
+  'orientacoes': '/Orientações',
 };
 
 const formatPagePath = (path: string): string => {
   // Check if path has a hash (dashboard tab)
-  const hashIndex = path.indexOf('#');
-  if (hashIndex > -1) {
-    const hash = path.substring(hashIndex);
-    return TAB_PATHS[hash] || hash.replace('#', '/');
+  if (path.includes('#')) {
+    const parts = path.split('#');
+    const hash = parts[1];
+    return TAB_PATHS[hash] || `/${hash}`;
   }
   
-  // No hash, format normally
+  // Dashboard without hash defaults to calendário
+  if (path === '/dashboard') return '/calendário';
+  
+  // Other pages
   if (path === '/') return '/home';
-  if (path === '/dashboard') return '/dashboard';
+  if (path === '/admin-analytics') return '/admin-analytics';
+  if (path === '/admin') return '/admin';
   return path;
 };
 
