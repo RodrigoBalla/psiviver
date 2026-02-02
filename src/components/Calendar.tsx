@@ -571,18 +571,18 @@ const Calendar = () => {
 
           {/* Legend */}
           <div className="mt-6 p-3 bg-zinc-900 rounded-lg">
-            <div className="text-xs text-zinc-500 uppercase tracking-wide mb-2">Legenda por Plataforma:</div>
+            <div className="text-xs text-zinc-500 uppercase tracking-wide mb-2">Legenda por Status:</div>
             <div className="flex flex-wrap gap-3">
               {[
-                { platform: 'Instagram', color: 'bg-emerald-700' },
-                { platform: 'LinkedIn', color: 'bg-blue-800' },
-                { platform: 'Tarefa', color: 'bg-amber-400' },
-                { platform: 'YouTube', color: 'bg-red-600' },
-                { platform: 'Outro', color: 'bg-zinc-600' },
+                { status: 'Sem Status', color: 'bg-zinc-600' },
+                { status: 'Revisado', color: 'bg-blue-600' },
+                { status: 'Em Produção', color: 'bg-orange-500' },
+                { status: 'Pronto', color: 'bg-yellow-400' },
+                { status: 'Publicado', color: 'bg-green-500' },
               ].map((item) => (
-                <div key={item.platform} className="flex items-center gap-1.5">
+                <div key={item.status} className="flex items-center gap-1.5">
                   <div className={`w-4 h-4 rounded ${item.color}`} />
-                  <span className="text-xs text-zinc-400">{item.platform}</span>
+                  <span className="text-xs text-zinc-400">{item.status}</span>
                 </div>
               ))}
             </div>
