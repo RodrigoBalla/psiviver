@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import CalendarDayCell from './CalendarDayCell';
 import EventModal from './EventModal';
 import NewEventModal from './NewEventModal';
-import PasswordModal from './PasswordModal';
+import AdminConfirmModal from './AdminConfirmModal';
 
 const statusLabels: Record<string, string> = {
   revisado: 'Revisado',
@@ -24,10 +24,10 @@ const Calendar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [newEventModalOpen, setNewEventModalOpen] = useState(false);
   const [newEventDay, setNewEventDay] = useState<number>(1);
-  const [deletePasswordModalOpen, setDeletePasswordModalOpen] = useState(false);
+  const [deleteConfirmModalOpen, setDeleteConfirmModalOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<{ day: number; index: number } | null>(null);
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { trackButtonClick } = useTracking(user?.id);
 
   // Load events from database
@@ -234,8 +234,17 @@ const Calendar = () => {
   };
 
   const openDeleteModal = (day: number, index: number) => {
+    // Check if user is admin before opening delete modal
+    if (!profile?.is_admin) {
+      toast({ 
+        title: 'Acesso Negado', 
+        description: 'Apenas administradores podem excluir eventos.', 
+        variant: 'destructive' 
+      });
+      return;
+    }
     setEventToDelete({ day, index });
-    setDeletePasswordModalOpen(true);
+    setDeleteConfirmModalOpen(true);
   };
 
   const deleteEvent = async () => {
@@ -454,16 +463,16 @@ const Calendar = () => {
         onSave={createNewEvent}
       />
 
-      {/* Delete Password Modal */}
-      <PasswordModal
-        open={deletePasswordModalOpen}
+      {/* Delete Confirm Modal */}
+      <AdminConfirmModal
+        open={deleteConfirmModalOpen}
         onClose={() => {
-          setDeletePasswordModalOpen(false);
+          setDeleteConfirmModalOpen(false);
           setEventToDelete(null);
         }}
         onConfirm={deleteEvent}
         title="Excluir Evento"
-        description="Digite a senha de administrador para excluir este evento:"
+        description="Tem certeza que deseja excluir este evento? Esta ação não pode ser desfeita."
         confirmLabel="Excluir"
         variant="destructive"
       />
