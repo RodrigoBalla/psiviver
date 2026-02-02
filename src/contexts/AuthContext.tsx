@@ -37,9 +37,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
-        .single();
-      
+        .maybeSingle();
+
       if (error) throw error;
+
+      // If profile doesn't exist yet (common for users created before profile insertion existed),
+      // create a minimal profile row for the authenticated user.
+      if (!data) {
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        if (userError) throw userError;
+
+        const email = userData.user?.email ?? '';
+        const userMeta = (userData.user?.user_metadata ?? {}) as Record<string, unknown>;
+        const nameFromMeta = typeof userMeta.name === 'string' ? userMeta.name : undefined;
+        const phoneFromMeta = typeof userMeta.phone === 'string' ? userMeta.phone : null;
+
+        const safeName = (nameFromMeta || email.split('@')[0] || 'Usuário').trim();
+
+        const { data: created, error: createError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: userId,
+            email,
+            name: safeName,
+            phone: phoneFromMeta,
+          })
+          .select('*')
+          .single();
+
+        if (createError) throw createError;
+        setProfile(created as Profile);
+        return;
+      }
+
       setProfile(data as Profile);
     } catch (error) {
       console.error('Error fetching profile:', error);

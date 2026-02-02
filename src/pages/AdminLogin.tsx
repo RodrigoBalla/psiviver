@@ -63,34 +63,57 @@ const AdminLogin = () => {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         
         if (currentUser) {
-          // Fetch profile directly to check admin status
-          const { data: profileData, error: profileError } = await supabase
+          // Fetch profile to check admin status. If it doesn't exist yet, create it.
+          const { data: existingProfile, error: existingProfileError } = await supabase
             .from('profiles')
             .select('is_admin')
             .eq('user_id', currentUser.id)
-            .single();
+            .maybeSingle();
 
-          if (profileError) {
-            throw profileError;
+          if (existingProfileError) throw existingProfileError;
+
+          let isAdmin = !!existingProfile?.is_admin;
+
+          if (!existingProfile) {
+            const email = currentUser.email ?? '';
+            const meta = (currentUser.user_metadata ?? {}) as Record<string, unknown>;
+            const nameFromMeta = typeof meta.name === 'string' ? meta.name : undefined;
+            const phoneFromMeta = typeof meta.phone === 'string' ? meta.phone : null;
+            const safeName = (nameFromMeta || email.split('@')[0] || 'Usuário').trim();
+
+            const { data: createdProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert({
+                user_id: currentUser.id,
+                email,
+                name: safeName,
+                phone: phoneFromMeta,
+              })
+              .select('is_admin')
+              .single();
+
+            if (createError) throw createError;
+            isAdmin = !!createdProfile?.is_admin;
           }
 
-          if (profileData?.is_admin) {
+          if (isAdmin) {
             navigate('/admin-analytics');
-          } else {
-            // Not an admin, sign out and show error
-            await supabase.auth.signOut();
-            toast({
-              title: "Acesso Negado",
-              description: "Esta conta não possui permissões de administrador.",
-              variant: "destructive",
-            });
+            return;
           }
+
+          // Not an admin, sign out and show error
+          await supabase.auth.signOut();
+          toast({
+            title: "Acesso Negado",
+            description: "Esta conta ainda não está cadastrada como administrador.",
+            variant: "destructive",
+          });
         }
       } catch (err) {
         console.error('Error verifying admin status:', err);
         toast({
           title: "Erro",
-          description: "Erro ao verificar permissões. Tente novamente.",
+          description: "Erro ao verificar permissões (perfil/roles). Tente novamente.",
           variant: "destructive",
         });
       } finally {
