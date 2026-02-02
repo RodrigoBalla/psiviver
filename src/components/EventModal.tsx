@@ -10,7 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ExternalLink, X } from 'lucide-react';
-import PasswordModal from './PasswordModal';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import AdminConfirmModal from './AdminConfirmModal';
 
 interface EventModalProps {
   open: boolean;
@@ -43,9 +45,11 @@ const EventModal: React.FC<EventModalProps> = ({
   const [showRoteiro, setShowRoteiro] = useState(false);
   const [showPublicacao, setShowPublicacao] = useState(false);
   const [linkInput, setLinkInput] = useState('');
-  const [showPasswordModalForAdd, setShowPasswordModalForAdd] = useState(false);
-  const [showPasswordModalForRemove, setShowPasswordModalForRemove] = useState(false);
+  const [showConfirmModalForAdd, setShowConfirmModalForAdd] = useState(false);
+  const [showConfirmModalForRemove, setShowConfirmModalForRemove] = useState(false);
   const [pendingLink, setPendingLink] = useState('');
+  const { profile } = useAuth();
+  const { toast } = useToast();
 
   if (!event) return null;
 
@@ -59,6 +63,16 @@ const EventModal: React.FC<EventModalProps> = ({
   };
 
   const handleSaveLink = () => {
+    // Check admin status before proceeding
+    if (!profile?.is_admin) {
+      toast({ 
+        title: 'Acesso Negado', 
+        description: 'Apenas administradores podem adicionar links de publicação.', 
+        variant: 'destructive' 
+      });
+      return;
+    }
+
     let link = linkInput.trim();
     if (!link) return;
 
@@ -69,9 +83,13 @@ const EventModal: React.FC<EventModalProps> = ({
     try {
       new URL(link);
       setPendingLink(link);
-      setShowPasswordModalForAdd(true);
+      setShowConfirmModalForAdd(true);
     } catch {
-      alert('Por favor, insira uma URL válida');
+      toast({ 
+        title: 'URL Inválida', 
+        description: 'Por favor, insira uma URL válida', 
+        variant: 'destructive' 
+      });
     }
   };
 
@@ -83,7 +101,16 @@ const EventModal: React.FC<EventModalProps> = ({
   };
 
   const handleRemoveLink = () => {
-    setShowPasswordModalForRemove(true);
+    // Check admin status before proceeding
+    if (!profile?.is_admin) {
+      toast({ 
+        title: 'Acesso Negado', 
+        description: 'Apenas administradores podem remover links de publicação.', 
+        variant: 'destructive' 
+      });
+      return;
+    }
+    setShowConfirmModalForRemove(true);
   };
 
   const confirmRemoveLink = () => {
@@ -256,26 +283,26 @@ const EventModal: React.FC<EventModalProps> = ({
         </DialogContent>
       </Dialog>
 
-      {/* Password Modal for Adding Link */}
-      <PasswordModal
-        open={showPasswordModalForAdd}
+      {/* Confirm Modal for Adding Link */}
+      <AdminConfirmModal
+        open={showConfirmModalForAdd}
         onClose={() => {
-          setShowPasswordModalForAdd(false);
+          setShowConfirmModalForAdd(false);
           setPendingLink('');
         }}
         onConfirm={confirmSaveLink}
         title="Adicionar Link de Publicação"
-        description="Digite a senha de administrador para adicionar o link:"
+        description="Tem certeza que deseja adicionar este link de publicação?"
         confirmLabel="Salvar Link"
       />
 
-      {/* Password Modal for Removing Link */}
-      <PasswordModal
-        open={showPasswordModalForRemove}
-        onClose={() => setShowPasswordModalForRemove(false)}
+      {/* Confirm Modal for Removing Link */}
+      <AdminConfirmModal
+        open={showConfirmModalForRemove}
+        onClose={() => setShowConfirmModalForRemove(false)}
         onConfirm={confirmRemoveLink}
         title="Remover Link da Publicação"
-        description="Digite a senha de administrador para remover o link:"
+        description="Tem certeza que deseja remover este link de publicação?"
         confirmLabel="Remover Link"
         variant="destructive"
       />
