@@ -33,6 +33,7 @@ const platforms = [
   'Blog',
   'Podcast',
   'Newsletter',
+  'Tarefa',
   'Outro',
 ];
 
