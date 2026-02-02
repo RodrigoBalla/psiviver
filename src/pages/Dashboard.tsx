@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTracking } from '@/hooks/useTracking';
 import { Button } from '@/components/ui/button';
@@ -10,21 +10,49 @@ import Rotina from '@/components/Rotina';
 import Stories from '@/components/Stories';
 import Orientacoes from '@/components/Orientacoes';
 
+const TAB_NAMES = ['calendario', 'rotina', 'stories', 'orientacoes'] as const;
+type TabName = typeof TAB_NAMES[number];
+
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState('calendario');
-  const { signOut, profile, user } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
+  const { signOut, profile, user } = useAuth();
+  
+  // Get initial tab from hash or default to 'calendario'
+  const getTabFromHash = (): TabName => {
+    const hash = location.hash.replace('#', '');
+    if (TAB_NAMES.includes(hash as TabName)) {
+      return hash as TabName;
+    }
+    return 'calendario';
+  };
+
+  const [activeTab, setActiveTab] = useState<TabName>(getTabFromHash);
   const { trackButtonClick } = useTracking(user?.id);
+
+  // Sync tab with URL hash on mount and when hash changes
+  useEffect(() => {
+    const tabFromHash = getTabFromHash();
+    if (tabFromHash !== activeTab) {
+      setActiveTab(tabFromHash);
+    }
+  }, [location.hash]);
+
+  // Update hash when tab changes
+  const handleTabChange = (value: string) => {
+    const tab = value as TabName;
+    trackButtonClick(`tab-${tab}`, tab);
+    setActiveTab(tab);
+    // Update URL hash without navigation
+    window.history.replaceState(null, '', `${location.pathname}#${tab}`);
+    // Dispatch a custom event so tracking hooks can pick up the change
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
+  };
 
   const handleLogout = async () => {
     trackButtonClick('logout', 'Sair');
     await signOut();
     navigate('/login');
-  };
-
-  const handleTabChange = (value: string) => {
-    trackButtonClick(`tab-${value}`, value);
-    setActiveTab(value);
   };
 
   const goToAdmin = () => {

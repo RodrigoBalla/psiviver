@@ -8,6 +8,33 @@ import { Users, Wifi, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+// Map hash to readable tab names
+const TAB_LABELS: Record<string, string> = {
+  '#calendario': 'Calendário',
+  '#rotina': 'Rotina',
+  '#stories': 'Stories',
+  '#orientacoes': 'Orientações',
+};
+
+const formatPagePath = (path: string): string => {
+  // Check if path has a hash
+  const hashIndex = path.indexOf('#');
+  if (hashIndex > -1) {
+    const basePath = path.substring(0, hashIndex);
+    const hash = path.substring(hashIndex);
+    const tabLabel = TAB_LABELS[hash] || hash.replace('#', '');
+    
+    // Format base path
+    let formattedBase = basePath === '/dashboard' ? 'Dashboard' : basePath === '/' ? 'Home' : basePath.replace('/', '');
+    return `${formattedBase} → ${tabLabel}`;
+  }
+  
+  // No hash, format normally
+  if (path === '/') return 'Home';
+  if (path === '/dashboard') return 'Dashboard';
+  return path.replace('/', '').charAt(0).toUpperCase() + path.slice(2);
+};
+
 interface OnlineUser {
   odlerId: string;
   name: string;
@@ -124,7 +151,7 @@ export const AdminOnlineUsers: React.FC<AdminOnlineUsersProps> = ({ profiles }) 
                   </div>
                   <div className="text-right">
                     <Badge variant="outline" className="text-xs bg-zinc-800 text-zinc-300 border-zinc-700 mb-1">
-                      {user.currentPage === '/' ? 'Home' : user.currentPage}
+                      {formatPagePath(user.currentPage || '/')}
                     </Badge>
                     <p className="text-zinc-500 text-xs flex items-center gap-1 justify-end">
                       <Clock className="w-3 h-3" />
