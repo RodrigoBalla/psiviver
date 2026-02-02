@@ -34,6 +34,48 @@ const Calendar = () => {
   useEffect(() => {
     loadEvents();
     loadGravadores();
+
+    // Subscribe to realtime changes for calendar_events
+    const eventsChannel = supabase
+      .channel('calendar-events-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'calendar_events',
+        },
+        (payload) => {
+          console.log('Realtime event received:', payload);
+          // Reload all events on any change
+          loadEvents();
+        }
+      )
+      .subscribe();
+
+    // Subscribe to realtime changes for calendar_gravadores
+    const gravadoresChannel = supabase
+      .channel('calendar-gravadores-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'calendar_gravadores',
+        },
+        (payload) => {
+          console.log('Realtime gravador received:', payload);
+          // Reload all gravadores on any change
+          loadGravadores();
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      supabase.removeChannel(eventsChannel);
+      supabase.removeChannel(gravadoresChannel);
+    };
   }, []);
 
   const loadEvents = async () => {
