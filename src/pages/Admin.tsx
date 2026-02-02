@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ArrowLeft, Users, Clock, MousePointer, History, RefreshCw, TrendingUp, Activity, BarChart3 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { AdminOnlineUsers } from '@/components/admin/AdminOnlineUsers';
 import {
   BarChart,
   Bar,
@@ -62,9 +63,9 @@ const Admin = () => {
   };
 
   const loadProfiles = async () => {
-    // Use masked view to protect sensitive data (emails and phones are masked)
+    // Admins can access full profiles table via RLS
     const { data, error } = await supabase
-      .from('profiles_masked')
+      .from('profiles')
       .select('*')
       .order('created_at', { ascending: false });
     
@@ -247,6 +248,11 @@ const Admin = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Online Users Card */}
+        <div className="mb-8">
+          <AdminOnlineUsers profiles={profiles} />
+        </div>
+
         {/* Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card className="bg-zinc-900 border-zinc-800">

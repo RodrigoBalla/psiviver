@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -22,48 +22,59 @@ interface AdminOnlineUsersProps {
 
 export const AdminOnlineUsers: React.FC<AdminOnlineUsersProps> = ({ profiles }) => {
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
-    const channel = supabase.channel('online-users', {
+    const channel = supabase.channel('presence-room', {
       config: {
-        presence: {
-          key: 'user_id',
-        },
+        broadcast: { self: true },
+        presence: { key: 'presence-key' },
       },
     });
+    
+    channelRef.current = channel;
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState();
-        const users: OnlineUser[] = [];
+    const handlePresenceSync = () => {
+      const state = channel.presenceState();
+      console.log('[AdminOnlineUsers] Presence sync:', JSON.stringify(state));
+      
+      const users: OnlineUser[] = [];
+      const seenUserIds = new Set<string>();
 
-        Object.entries(state).forEach(([key, presences]) => {
-          if (Array.isArray(presences) && presences.length > 0) {
-            const presence = presences[0] as {
-              user_id?: string;
-              name?: string;
-              email?: string;
-              currentPage?: string;
-              onlineSince?: string;
-            };
+      Object.values(state).forEach((presences) => {
+        if (Array.isArray(presences)) {
+          presences.forEach((presence: any) => {
+            const userId = presence.user_id;
+            if (!userId || seenUserIds.has(userId)) return;
+            seenUserIds.add(userId);
             
-            const profile = profiles.find((p) => p.user_id === presence.user_id);
+            const profile = profiles.find((p) => p.user_id === userId);
             
             users.push({
-              odlerId: presence.user_id || key,
+              odlerId: userId,
               name: profile?.name || presence.name || 'Anônimo',
               email: profile?.email || presence.email,
               currentPage: presence.currentPage || '/',
               onlineSince: presence.onlineSince || new Date().toISOString(),
             });
-          }
-        });
+          });
+        }
+      });
 
-        setOnlineUsers(users);
-      })
-      .subscribe();
+      console.log('[AdminOnlineUsers] Users online:', users.length);
+      setOnlineUsers(users);
+    };
+
+    channel
+      .on('presence', { event: 'sync' }, handlePresenceSync)
+      .on('presence', { event: 'join' }, () => handlePresenceSync())
+      .on('presence', { event: 'leave' }, () => handlePresenceSync())
+      .subscribe((status) => {
+        console.log('[AdminOnlineUsers] Channel status:', status);
+      });
 
     return () => {
+      console.log('[AdminOnlineUsers] Removing channel');
       supabase.removeChannel(channel);
     };
   }, [profiles]);
