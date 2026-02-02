@@ -38,6 +38,14 @@ const Dashboard = () => {
     }
   }, [location.hash]);
 
+  // Map tab to display path for tracking
+  const TAB_TO_PATH: Record<TabName, string> = {
+    'calendario': '/calendário',
+    'rotina': '/rotina',
+    'stories': '/pautasstories',
+    'orientacoes': '/Orientações',
+  };
+
   // Update hash when tab changes
   const handleTabChange = (value: string) => {
     const tab = value as TabName;
@@ -45,8 +53,10 @@ const Dashboard = () => {
     setActiveTab(tab);
     // Update URL hash without navigation
     window.history.replaceState(null, '', `${location.pathname}#${tab}`);
-    // Dispatch a custom event so tracking hooks can pick up the change
-    window.dispatchEvent(new HashChangeEvent('hashchange'));
+    // Dispatch custom event with the tab path for presence tracking
+    window.dispatchEvent(new CustomEvent('tab-change', { 
+      detail: { tabPath: TAB_TO_PATH[tab] } 
+    }));
   };
 
   const handleLogout = async () => {

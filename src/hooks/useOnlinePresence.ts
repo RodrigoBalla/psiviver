@@ -3,37 +3,66 @@ import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-/**
- * Returns the full path including hash (e.g., "/dashboard#calendario")
- */
-const getFullPath = (pathname: string, hash: string) => {
-  return hash ? `${pathname}${hash}` : pathname;
+// Map for initial tab detection from hash
+const HASH_TO_PATH: Record<string, string> = {
+  '#calendario': '/calendário',
+  '#rotina': '/rotina',
+  '#stories': '/pautasstories',
+  '#orientacoes': '/Orientações',
 };
 
 /**
  * Hook that tracks the current user's online presence.
  * Uses Supabase Realtime Presence to broadcast user status.
- * Includes hash in the current page for tab tracking.
+ * Listens for tab-change events to update current page.
  */
 export const useOnlinePresence = () => {
   const { user, profile } = useAuth();
   const location = useLocation();
-  const [currentHash, setCurrentHash] = useState(
-    typeof window !== 'undefined' ? window.location.hash : ''
-  );
+  
+  // Track current page path for presence
+  const [currentPage, setCurrentPage] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (window.location.pathname === '/dashboard' && hash) {
+        return HASH_TO_PATH[hash] || '/calendário';
+      }
+      if (window.location.pathname === '/dashboard') {
+        return '/calendário';
+      }
+      return window.location.pathname;
+    }
+    return '/';
+  });
+  
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const isSubscribed = useRef(false);
   const onlineSinceRef = useRef<string>(new Date().toISOString());
 
-  // Listen for hash changes
+  // Listen for tab-change events from Dashboard
   useEffect(() => {
-    const handleHashChange = () => {
-      setCurrentHash(window.location.hash);
+    const handleTabChange = (event: CustomEvent<{ tabPath: string }>) => {
+      setCurrentPage(event.detail.tabPath);
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('tab-change', handleTabChange as EventListener);
+    return () => window.removeEventListener('tab-change', handleTabChange as EventListener);
   }, []);
+
+  // Update current page when route changes (for non-dashboard pages)
+  useEffect(() => {
+    if (location.pathname !== '/dashboard') {
+      setCurrentPage(location.pathname);
+    } else {
+      // On dashboard, check hash for initial load
+      const hash = window.location.hash;
+      if (hash) {
+        setCurrentPage(HASH_TO_PATH[hash] || '/calendário');
+      } else {
+        setCurrentPage('/calendário');
+      }
+    }
+  }, [location.pathname]);
 
   // Single effect for channel management
   useEffect(() => {
@@ -47,8 +76,6 @@ export const useOnlinePresence = () => {
       }
       return;
     }
-
-    const fullPath = getFullPath(location.pathname, currentHash);
 
     // Create channel if not exists
     if (!channelRef.current) {
@@ -69,7 +96,7 @@ export const useOnlinePresence = () => {
             user_id: user.id,
             name: profile?.name || user.email?.split('@')[0] || 'Usuário',
             email: profile?.email || user.email,
-            currentPage: fullPath,
+            currentPage: currentPage,
             onlineSince: onlineSinceRef.current,
           });
         } else if (status === 'CLOSED' || status === 'TIMED_OUT') {
@@ -77,12 +104,12 @@ export const useOnlinePresence = () => {
         }
       });
     } else if (isSubscribed.current) {
-      // Update presence when location or hash changes
+      // Update presence when page or profile changes
       channelRef.current.track({
         user_id: user.id,
         name: profile?.name || user.email?.split('@')[0] || 'Usuário',
         email: profile?.email || user.email,
-        currentPage: fullPath,
+        currentPage: currentPage,
         onlineSince: onlineSinceRef.current,
       });
     }
@@ -96,5 +123,5 @@ export const useOnlinePresence = () => {
         isSubscribed.current = false;
       }
     };
-  }, [user, profile?.name, profile?.email, location.pathname, currentHash]);
+  }, [user, profile?.name, profile?.email, currentPage]);
 };
