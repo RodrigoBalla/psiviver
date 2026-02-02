@@ -63,16 +63,14 @@ const AdminLogin = () => {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         
         if (currentUser) {
-          // Fetch profile to check admin status. If it doesn't exist yet, create it.
+          // Ensure profile exists
           const { data: existingProfile, error: existingProfileError } = await supabase
             .from('profiles')
-            .select('is_admin')
+            .select('id')
             .eq('user_id', currentUser.id)
             .maybeSingle();
 
           if (existingProfileError) throw existingProfileError;
-
-          let isAdmin = !!existingProfile?.is_admin;
 
           if (!existingProfile) {
             const email = currentUser.email ?? '';
@@ -81,22 +79,23 @@ const AdminLogin = () => {
             const phoneFromMeta = typeof meta.phone === 'string' ? meta.phone : null;
             const safeName = (nameFromMeta || email.split('@')[0] || 'Usuário').trim();
 
-            const { data: createdProfile, error: createError } = await supabase
+            const { error: createError } = await supabase
               .from('profiles')
               .insert({
                 user_id: currentUser.id,
                 email,
                 name: safeName,
                 phone: phoneFromMeta,
-              })
-              .select('is_admin')
-              .single();
+              });
 
             if (createError) throw createError;
-            isAdmin = !!createdProfile?.is_admin;
           }
 
-          if (isAdmin) {
+          // Check admin status using the secure RPC function
+          const { data: isAdmin } = await supabase
+            .rpc('is_admin', { _user_id: currentUser.id });
+
+          if (isAdmin === true) {
             navigate('/admin-analytics');
             return;
           }

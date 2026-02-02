@@ -3,10 +3,14 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/types/calendar';
 
+interface ProfileWithAdmin extends Profile {
+  is_admin: boolean;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  profile: Profile | null;
+  profile: ProfileWithAdmin | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, name: string, phone: string) => Promise<{ error: Error | null }>;
@@ -28,22 +32,28 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<ProfileWithAdmin | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // Fetch profile data
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (profileError) throw profileError;
 
-      // If profile doesn't exist yet (common for users created before profile insertion existed),
-      // create a minimal profile row for the authenticated user.
-      if (!data) {
+      // Check if user has admin role using the secure is_admin RPC function
+      const { data: isAdminResult } = await supabase
+        .rpc('is_admin', { _user_id: userId });
+
+      const isAdmin = isAdminResult === true;
+
+      // If profile doesn't exist yet, create a minimal profile row
+      if (!profileData) {
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
 
@@ -66,11 +76,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .single();
 
         if (createError) throw createError;
-        setProfile(created as Profile);
+        setProfile({ ...(created as Profile), is_admin: isAdmin });
         return;
       }
 
-      setProfile(data as Profile);
+      setProfile({ ...(profileData as Profile), is_admin: isAdmin });
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
