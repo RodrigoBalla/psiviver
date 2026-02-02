@@ -64,9 +64,25 @@ export const AdminBehaviorCharts: React.FC<AdminBehaviorChartsProps> = ({
       timeByPage[page] = (timeByPage[page] || 0) + (visit.duration_seconds || 0);
     });
 
+    const formatPageName = (pagePath: string): string => {
+      if (pagePath === '/') return 'Home';
+      if (pagePath.includes('#')) {
+        const [path, hash] = pagePath.split('#');
+        const basePage = path === '/dashboard' ? 'Dash' : path.replace('/', '').slice(0, 6);
+        const tabLabels: Record<string, string> = {
+          'calendario': 'Cal',
+          'rotina': 'Rot',
+          'orientacoes': 'Orient',
+          'stories': 'Stories',
+        };
+        return `${basePage}→${tabLabels[hash] || hash}`;
+      }
+      return pagePath.replace('/', '').slice(0, 12);
+    };
+
     return Object.entries(timeByPage)
       .map(([page, time]) => ({
-        name: page === '/' ? 'Home' : page.replace('/', '').slice(0, 12),
+        name: formatPageName(page),
         fullName: page,
         tempo: Math.round(time / 60),
         percentage: 0,
@@ -78,6 +94,37 @@ export const AdminBehaviorCharts: React.FC<AdminBehaviorChartsProps> = ({
         return { ...item, percentage: total > 0 ? Math.round((item.tempo / total) * 100) : 0 };
       });
   }, [filteredData.visits]);
+
+  // Tab labels for dashboard
+  const TAB_LABELS: Record<string, string> = {
+    'calendario': 'Calendário',
+    'rotina': 'Rotina',
+    'orientacoes': 'Orientações',
+    'stories': 'Stories',
+  };
+
+  const formatPageName = (pagePath: string): string => {
+    if (pagePath === '/') return 'Home';
+    
+    // Check if it has a hash (tab)
+    if (pagePath.includes('#')) {
+      const [path, hash] = pagePath.split('#');
+      const basePage = path === '/dashboard' ? 'Dashboard' : path.replace('/', '');
+      const tabName = TAB_LABELS[hash] || hash;
+      return `${basePage} → ${tabName}`;
+    }
+    
+    // Regular pages
+    const cleanPath = pagePath.replace('/', '');
+    const pageNames: Record<string, string> = {
+      'dashboard': 'Dashboard',
+      'admin': 'Admin',
+      'admin-analytics': 'Analytics',
+      'login': 'Login',
+      'cadastro': 'Cadastro',
+    };
+    return pageNames[cleanPath] || cleanPath.slice(0, 15);
+  };
 
   // Most accessed pages
   const pagesAccessData = useMemo(() => {
@@ -91,12 +138,13 @@ export const AdminBehaviorCharts: React.FC<AdminBehaviorChartsProps> = ({
 
     return Object.entries(accessByPage)
       .map(([page, count]) => ({
-        name: page === '/' ? 'Home' : page.replace('/', '').slice(0, 15),
+        name: formatPageName(page),
+        fullPath: page,
         value: count,
         percentage: total > 0 ? Math.round((count / total) * 100) : 0,
       }))
       .sort((a, b) => b.value - a.value)
-      .slice(0, 6);
+      .slice(0, 8);
   }, [filteredData.visits]);
 
   // Top clicked buttons
