@@ -33,11 +33,15 @@ const YELLOW = '#facc15';
 const YELLOW_DARK = '#ca8a04';
 const YELLOW_LIGHT = '#fef08a';
 
+interface ProfileWithAdmin extends Profile {
+  is_admin: boolean;
+}
+
 const Admin = () => {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [profiles, setProfiles] = useState<ProfileWithAdmin[]>([]);
   const [loginHistory, setLoginHistory] = useState<LoginHistory[]>([]);
   const [pageVisits, setPageVisits] = useState<PageVisit[]>([]);
   const [buttonClicks, setButtonClicks] = useState<ButtonClick[]>([]);
@@ -64,14 +68,26 @@ const Admin = () => {
 
   const loadProfiles = async () => {
     // Admins can access full profiles table via RLS
-    const { data, error } = await supabase
+    const { data: profilesData, error: profilesError } = await supabase
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false });
     
-    if (!error && data) {
-      setProfiles(data as Profile[]);
-    }
+    if (profilesError || !profilesData) return;
+
+    // Check admin status for each user using the secure RPC function
+    const profilesWithAdmin: ProfileWithAdmin[] = await Promise.all(
+      profilesData.map(async (p) => {
+        const { data: isAdmin } = await supabase
+          .rpc('is_admin', { _user_id: p.user_id });
+        return {
+          ...(p as Profile),
+          is_admin: isAdmin === true,
+        };
+      })
+    );
+
+    setProfiles(profilesWithAdmin);
   };
 
   const loadLoginHistory = async () => {
