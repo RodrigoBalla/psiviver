@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import CalendarDayCell from './CalendarDayCell';
 import EventModal from './EventModal';
 import NewEventModal from './NewEventModal';
+import PasswordModal from './PasswordModal';
 
 const statusLabels: Record<string, string> = {
   revisado: 'Revisado',
@@ -23,6 +24,8 @@ const Calendar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [newEventModalOpen, setNewEventModalOpen] = useState(false);
   const [newEventDay, setNewEventDay] = useState<number>(1);
+  const [deletePasswordModalOpen, setDeletePasswordModalOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<{ day: number; index: number } | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const { trackButtonClick } = useTracking(user?.id);
@@ -157,6 +160,41 @@ const Calendar = () => {
     });
 
     toast({ title: 'Sucesso', description: 'Evento criado com sucesso!' });
+  };
+
+  const openDeleteModal = (day: number, index: number) => {
+    setEventToDelete({ day, index });
+    setDeletePasswordModalOpen(true);
+  };
+
+  const deleteEvent = async () => {
+    if (!eventToDelete) return;
+
+    const event = events[eventToDelete.day]?.[eventToDelete.index];
+    if (!event || !event.id) return;
+
+    trackButtonClick('delete-event', `Excluir: ${event.title}`);
+
+    const { error } = await supabase
+      .from('calendar_events')
+      .delete()
+      .eq('id', event.id);
+
+    if (error) {
+      toast({ title: 'Erro', description: 'Erro ao excluir evento', variant: 'destructive' });
+      return;
+    }
+
+    setEvents((prev) => {
+      const newEvents = { ...prev };
+      if (newEvents[eventToDelete.day]) {
+        newEvents[eventToDelete.day] = newEvents[eventToDelete.day].filter((_, i) => i !== eventToDelete.index);
+      }
+      return newEvents;
+    });
+
+    setEventToDelete(null);
+    toast({ title: 'Sucesso', description: 'Evento excluído com sucesso!' });
   };
 
   const updateEventStatus = async (status: string | null) => {
@@ -302,6 +340,7 @@ const Calendar = () => {
                 onGravadorChange={(value) => updateGravador(day, value)}
                 onEventClick={(index) => openModal(day, index)}
                 onAddEvent={() => openNewEventModal(day)}
+                onDeleteEvent={(index) => openDeleteModal(day, index)}
               />
             );
           })}
@@ -342,6 +381,20 @@ const Calendar = () => {
         onClose={closeNewEventModal}
         day={newEventDay}
         onSave={createNewEvent}
+      />
+
+      {/* Delete Password Modal */}
+      <PasswordModal
+        open={deletePasswordModalOpen}
+        onClose={() => {
+          setDeletePasswordModalOpen(false);
+          setEventToDelete(null);
+        }}
+        onConfirm={deleteEvent}
+        title="Excluir Evento"
+        description="Digite a senha de administrador para excluir este evento:"
+        confirmLabel="Excluir"
+        variant="destructive"
       />
     </div>
   );

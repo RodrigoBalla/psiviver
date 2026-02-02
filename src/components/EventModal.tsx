@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ExternalLink, X } from 'lucide-react';
+import PasswordModal from './PasswordModal';
 
 interface EventModalProps {
   open: boolean;
@@ -42,11 +43,9 @@ const EventModal: React.FC<EventModalProps> = ({
   const [showRoteiro, setShowRoteiro] = useState(false);
   const [showPublicacao, setShowPublicacao] = useState(false);
   const [linkInput, setLinkInput] = useState('');
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-
-  if (!event) return null;
+  const [showPasswordModalForAdd, setShowPasswordModalForAdd] = useState(false);
+  const [showPasswordModalForRemove, setShowPasswordModalForRemove] = useState(false);
+  const [pendingLink, setPendingLink] = useState('');
 
   if (!event) return null;
 
@@ -69,28 +68,26 @@ const EventModal: React.FC<EventModalProps> = ({
 
     try {
       new URL(link);
-      onSavePublicacao(link);
-      setLinkInput('');
-      setShowPublicacao(false);
+      setPendingLink(link);
+      setShowPasswordModalForAdd(true);
     } catch {
       alert('Por favor, insira uma URL válida');
     }
   };
 
+  const confirmSaveLink = () => {
+    onSavePublicacao(pendingLink);
+    setLinkInput('');
+    setPendingLink('');
+    setShowPublicacao(false);
+  };
+
   const handleRemoveLink = () => {
-    setShowPasswordModal(true);
-    setPassword('');
-    setPasswordError(false);
+    setShowPasswordModalForRemove(true);
   };
 
   const confirmRemoveLink = () => {
-    if (password === 'PSIVIVER2026') {
-      onRemovePublicacao();
-      setShowPasswordModal(false);
-      setPassword('');
-    } else {
-      setPasswordError(true);
-    }
+    onRemovePublicacao();
   };
 
   const toggleRoteiro = () => {
@@ -136,7 +133,7 @@ const EventModal: React.FC<EventModalProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => onStatusChange(null)}
-                  className="bg-white text-foreground hover:bg-gray-100"
+                  className="bg-white text-zinc-900 hover:bg-gray-100"
                 >
                   Sem Status
                 </Button>
@@ -223,7 +220,7 @@ const EventModal: React.FC<EventModalProps> = ({
                     <h3 className="text-lg font-display text-primary mb-4">Adicionar Publicação</h3>
                     <div className="space-y-4">
                       <p className="text-muted-foreground">
-                        Adicione o link da publicação:
+                        Adicione o link da publicação (requer senha de admin):
                       </p>
                       <Input
                         type="url"
@@ -233,7 +230,7 @@ const EventModal: React.FC<EventModalProps> = ({
                         className="bg-muted"
                       />
                       <Button onClick={handleSaveLink} className="w-full">
-                        💾 Salvar Link
+                        🔐 Salvar Link
                       </Button>
                     </div>
                   </div>
@@ -259,53 +256,29 @@ const EventModal: React.FC<EventModalProps> = ({
         </DialogContent>
       </Dialog>
 
-      {/* Password Modal */}
-      <Dialog open={showPasswordModal} onOpenChange={setShowPasswordModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-display text-primary">
-              🔐 Remover Link da Publicação
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-muted-foreground">
-              Digite a senha de administrador para remover o link:
-            </p>
-            <Input
-              type="password"
-              placeholder="Senha..."
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setPasswordError(false);
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && confirmRemoveLink()}
-              className={`bg-muted ${passwordError ? 'border-destructive animate-shake' : ''}`}
-            />
-            {passwordError && (
-              <p className="text-destructive text-sm animate-fade-in">
-                ❌ Senha incorreta, verifique e tente novamente.
-              </p>
-            )}
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setShowPasswordModal(false)}
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="destructive"
-                className="flex-1"
-                onClick={confirmRemoveLink}
-              >
-                Remover Link
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Password Modal for Adding Link */}
+      <PasswordModal
+        open={showPasswordModalForAdd}
+        onClose={() => {
+          setShowPasswordModalForAdd(false);
+          setPendingLink('');
+        }}
+        onConfirm={confirmSaveLink}
+        title="Adicionar Link de Publicação"
+        description="Digite a senha de administrador para adicionar o link:"
+        confirmLabel="Salvar Link"
+      />
+
+      {/* Password Modal for Removing Link */}
+      <PasswordModal
+        open={showPasswordModalForRemove}
+        onClose={() => setShowPasswordModalForRemove(false)}
+        onConfirm={confirmRemoveLink}
+        title="Remover Link da Publicação"
+        description="Digite a senha de administrador para remover o link:"
+        confirmLabel="Remover Link"
+        variant="destructive"
+      />
     </>
   );
 };
