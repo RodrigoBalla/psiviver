@@ -5,12 +5,32 @@ import { supabase } from '@/integrations/supabase/client';
 import { Profile, LoginHistory, PageVisit, ButtonClick } from '@/types/calendar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ArrowLeft, Users, Clock, MousePointer, History, RefreshCw } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ArrowLeft, Users, Clock, MousePointer, History, RefreshCw, TrendingUp, Activity, BarChart3 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  Legend,
+  AreaChart,
+  Area,
+} from 'recharts';
+
+const YELLOW = '#facc15';
+const YELLOW_DARK = '#ca8a04';
+const YELLOW_LIGHT = '#fef08a';
 
 const Admin = () => {
   const { profile } = useAuth();
@@ -105,26 +125,9 @@ const Admin = () => {
     return profile?.name || 'Usuário desconhecido';
   };
 
-  const getProfileEmail = (userId: string) => {
-    const profile = profiles.find((p) => p.user_id === userId);
-    return profile?.email || '-';
-  };
-
-  const filteredLoginHistory = selectedUser
-    ? loginHistory.filter((l) => l.user_id === selectedUser)
-    : loginHistory;
-
-  const filteredPageVisits = selectedUser
-    ? pageVisits.filter((p) => p.user_id === selectedUser)
-    : pageVisits;
-
-  const filteredButtonClicks = selectedUser
-    ? buttonClicks.filter((b) => b.user_id === selectedUser)
-    : buttonClicks;
-
   // Calculate stats
   const totalTimePerUser = pageVisits.reduce((acc, visit) => {
-    acc[visit.user_id] = (acc[visit.user_id] || 0) + visit.duration_seconds;
+    acc[visit.user_id] = (acc[visit.user_id] || 0) + (visit.duration_seconds || 0);
     return acc;
   }, {} as Record<string, number>);
 
@@ -133,37 +136,107 @@ const Admin = () => {
     return acc;
   }, {} as Record<string, number>);
 
+  const clicksPerUser = buttonClicks.reduce((acc, click) => {
+    acc[click.user_id] = (acc[click.user_id] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Chart Data: Time per member
+  const timePerMemberData = profiles.map((p) => ({
+    name: p.name.split(' ')[0],
+    tempo: Math.round((totalTimePerUser[p.user_id] || 0) / 60), // in minutes
+    logins: loginCountPerUser[p.user_id] || 0,
+    cliques: clicksPerUser[p.user_id] || 0,
+  }));
+
+  // Chart Data: Page visits distribution
+  const pageVisitsByPath = pageVisits.reduce((acc, visit) => {
+    const path = visit.page_path || '/';
+    acc[path] = (acc[path] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const pageVisitsData = Object.entries(pageVisitsByPath)
+    .map(([path, count]) => ({
+      name: path === '/' ? 'Home' : path.replace('/', '').charAt(0).toUpperCase() + path.slice(2),
+      value: count,
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
+
+  // Chart Data: Activity over time (last 7 days)
+  const last7Days = Array.from({ length: 7 }).map((_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return format(date, 'dd/MM');
+  });
+
+  const activityData = last7Days.map((dateStr) => {
+    const logins = loginHistory.filter((l) => 
+      format(new Date(l.login_at), 'dd/MM') === dateStr
+    ).length;
+    const visits = pageVisits.filter((v) => 
+      format(new Date(v.entered_at), 'dd/MM') === dateStr
+    ).length;
+    return { name: dateStr, logins, visitas: visits };
+  });
+
+  // Chart Data: Top clicked buttons
+  const buttonClicksByLabel = buttonClicks.reduce((acc, click) => {
+    const label = click.button_label || click.button_id;
+    acc[label] = (acc[label] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const topButtonsData = Object.entries(buttonClicksByLabel)
+    .map(([label, count]) => ({ name: label.slice(0, 15), cliques: count }))
+    .sort((a, b) => b.cliques - a.cliques)
+    .slice(0, 8);
+
+  const PIE_COLORS = [YELLOW, YELLOW_DARK, YELLOW_LIGHT, '#a16207', '#eab308', '#fde047'];
+
+  const totalTime = Object.values(totalTimePerUser).reduce((a, b) => a + b, 0);
+  const avgTimePerUser = profiles.length > 0 ? totalTime / profiles.length : 0;
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
-          <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Carregando dados...</p>
+          <RefreshCw className="w-8 h-8 animate-spin text-yellow-500 mx-auto mb-4" />
+          <p className="text-zinc-400">Carregando dados...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100">
       {/* Header */}
-      <header className="bg-gradient-to-r from-card to-accent border-b-2 border-border">
+      <header className="bg-zinc-900 border-b-2 border-yellow-500">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-display font-bold text-primary tracking-widest">
-                PAINEL ADMINISTRATIVO
+              <h1 className="text-3xl font-display font-bold text-yellow-500 tracking-widest flex items-center gap-3">
+                <BarChart3 className="w-8 h-8" />
+                RELATÓRIOS DE MEMBROS
               </h1>
-              <p className="text-muted-foreground">
-                Relatórios de acesso e atividade dos membros
+              <p className="text-zinc-400 mt-1">
+                Análise completa de atividade e engajamento
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={loadAllData}>
+              <Button 
+                onClick={loadAllData}
+                className="bg-yellow-500 text-zinc-900 hover:bg-yellow-400 font-bold"
+              >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Atualizar
               </Button>
-              <Button variant="outline" onClick={() => navigate('/')}>
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/')}
+                className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-zinc-900"
+              >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar
               </Button>
@@ -173,76 +246,200 @@ const Admin = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-                <Users className="w-4 h-4 mr-2" />
-                Total de Membros
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-primary">{profiles.length}</p>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-zinc-400 uppercase tracking-wide">Membros</p>
+                  <p className="text-3xl font-bold text-yellow-500">{profiles.length}</p>
+                </div>
+                <Users className="w-10 h-10 text-yellow-500/50" />
+              </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-                <History className="w-4 h-4 mr-2" />
-                Total de Logins
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-primary">{loginHistory.length}</p>
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-zinc-400 uppercase tracking-wide">Total Logins</p>
+                  <p className="text-3xl font-bold text-yellow-500">{loginHistory.length}</p>
+                </div>
+                <History className="w-10 h-10 text-yellow-500/50" />
+              </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-                <Clock className="w-4 h-4 mr-2" />
-                Visitas a Páginas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-primary">{pageVisits.length}</p>
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-zinc-400 uppercase tracking-wide">Tempo Médio</p>
+                  <p className="text-3xl font-bold text-yellow-500">{formatDuration(Math.round(avgTimePerUser))}</p>
+                </div>
+                <Clock className="w-10 h-10 text-yellow-500/50" />
+              </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center">
-                <MousePointer className="w-4 h-4 mr-2" />
-                Cliques em Botões
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-primary">{buttonClicks.length}</p>
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-zinc-400 uppercase tracking-wide">Interações</p>
+                  <p className="text-3xl font-bold text-yellow-500">{buttonClicks.length}</p>
+                </div>
+                <MousePointer className="w-10 h-10 text-yellow-500/50" />
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Filter by user */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg font-display text-primary">
-              Filtrar por Membro
-            </CardTitle>
+        {/* Charts Row 1 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Time per Member */}
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-yellow-500 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                Tempo de Visualização por Membro (minutos)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={timePerMemberData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
+                    <XAxis dataKey="name" stroke="#a1a1aa" fontSize={12} />
+                    <YAxis stroke="#a1a1aa" fontSize={12} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #facc15', color: '#fff' }}
+                      labelStyle={{ color: '#facc15' }}
+                    />
+                    <Bar dataKey="tempo" fill={YELLOW} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Activity Over Time */}
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-yellow-500 flex items-center gap-2">
+                <Activity className="w-5 h-5" />
+                Atividade nos Últimos 7 Dias
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={activityData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
+                    <XAxis dataKey="name" stroke="#a1a1aa" fontSize={12} />
+                    <YAxis stroke="#a1a1aa" fontSize={12} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #facc15', color: '#fff' }}
+                      labelStyle={{ color: '#facc15' }}
+                    />
+                    <Legend />
+                    <Area type="monotone" dataKey="logins" stackId="1" stroke={YELLOW} fill={YELLOW} fillOpacity={0.6} />
+                    <Area type="monotone" dataKey="visitas" stackId="2" stroke={YELLOW_LIGHT} fill={YELLOW_LIGHT} fillOpacity={0.4} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Charts Row 2 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Pages Distribution */}
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-yellow-500 flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                Distribuição de Visitas por Página
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pageVisitsData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {pageVisitsData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #facc15', color: '#fff' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Top Buttons */}
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-yellow-500 flex items-center gap-2">
+                <MousePointer className="w-5 h-5" />
+                Botões Mais Clicados
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={topButtonsData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
+                    <XAxis type="number" stroke="#a1a1aa" fontSize={12} />
+                    <YAxis dataKey="name" type="category" stroke="#a1a1aa" fontSize={10} width={100} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #facc15', color: '#fff' }}
+                    />
+                    <Bar dataKey="cliques" fill={YELLOW_DARK} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Member Filter */}
+        <Card className="bg-zinc-900 border-zinc-800 mb-6">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-yellow-500">Filtrar por Membro</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
               <Button
-                variant={selectedUser === null ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedUser(null)}
+                className={selectedUser === null 
+                  ? 'bg-yellow-500 text-zinc-900 hover:bg-yellow-400' 
+                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                }
               >
                 Todos
               </Button>
               {profiles.map((p) => (
                 <Button
                   key={p.id}
-                  variant={selectedUser === p.user_id ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedUser(p.user_id)}
+                  className={selectedUser === p.user_id 
+                    ? 'bg-yellow-500 text-zinc-900 hover:bg-yellow-400' 
+                    : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+                  }
                 >
                   {p.name}
                 </Button>
@@ -251,199 +448,63 @@ const Admin = () => {
           </CardContent>
         </Card>
 
-        {/* Tabs */}
-        <Tabs defaultValue="members">
-          <TabsList className="mb-4">
-            <TabsTrigger value="members">
-              <Users className="w-4 h-4 mr-2" />
-              Membros
-            </TabsTrigger>
-            <TabsTrigger value="logins">
-              <History className="w-4 h-4 mr-2" />
-              Histórico de Login
-            </TabsTrigger>
-            <TabsTrigger value="pages">
-              <Clock className="w-4 h-4 mr-2" />
-              Tempo por Página
-            </TabsTrigger>
-            <TabsTrigger value="clicks">
-              <MousePointer className="w-4 h-4 mr-2" />
-              Cliques em Botões
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Members Tab */}
-          <TabsContent value="members">
-            <Card>
-              <CardHeader>
-                <CardTitle>Membros Cadastrados</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Telefone</TableHead>
-                        <TableHead>Data de Cadastro</TableHead>
-                        <TableHead>Total de Logins</TableHead>
-                        <TableHead>Tempo Total</TableHead>
-                        <TableHead>Admin</TableHead>
+        {/* Members Table */}
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader>
+            <CardTitle className="text-yellow-500 flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Detalhes dos Membros
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[400px]">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-zinc-800 hover:bg-zinc-800/50">
+                    <TableHead className="text-yellow-500">Nome</TableHead>
+                    <TableHead className="text-yellow-500">Email</TableHead>
+                    <TableHead className="text-yellow-500">Cadastro</TableHead>
+                    <TableHead className="text-yellow-500 text-center">Logins</TableHead>
+                    <TableHead className="text-yellow-500 text-center">Tempo Total</TableHead>
+                    <TableHead className="text-yellow-500 text-center">Cliques</TableHead>
+                    <TableHead className="text-yellow-500 text-center">Admin</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {profiles
+                    .filter((p) => !selectedUser || p.user_id === selectedUser)
+                    .map((p) => (
+                      <TableRow key={p.id} className="border-zinc-800 hover:bg-zinc-800/50">
+                        <TableCell className="font-medium text-zinc-100">{p.name}</TableCell>
+                        <TableCell className="text-zinc-400">{p.email}</TableCell>
+                        <TableCell className="text-zinc-400">{formatDate(p.created_at)}</TableCell>
+                        <TableCell className="text-center font-bold text-yellow-500">
+                          {loginCountPerUser[p.user_id] || 0}
+                        </TableCell>
+                        <TableCell className="text-center font-bold text-yellow-500">
+                          {formatDuration(totalTimePerUser[p.user_id] || 0)}
+                        </TableCell>
+                        <TableCell className="text-center font-bold text-yellow-500">
+                          {clicksPerUser[p.user_id] || 0}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-bold ${
+                              p.is_admin
+                                ? 'bg-yellow-500 text-zinc-900'
+                                : 'bg-zinc-800 text-zinc-400'
+                            }`}
+                          >
+                            {p.is_admin ? 'Sim' : 'Não'}
+                          </span>
+                        </TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {profiles.map((p) => (
-                        <TableRow key={p.id}>
-                          <TableCell className="font-medium">{p.name}</TableCell>
-                          <TableCell>{p.email}</TableCell>
-                          <TableCell>{p.phone || '-'}</TableCell>
-                          <TableCell>{formatDate(p.created_at)}</TableCell>
-                          <TableCell>{loginCountPerUser[p.user_id] || 0}</TableCell>
-                          <TableCell>
-                            {formatDuration(totalTimePerUser[p.user_id] || 0)}
-                          </TableCell>
-                          <TableCell>
-                            <span
-                              className={`px-2 py-1 rounded text-xs font-bold ${
-                                p.is_admin
-                                  ? 'bg-psiviver-verde text-white'
-                                  : 'bg-muted text-muted-foreground'
-                              }`}
-                            >
-                              {p.is_admin ? 'Sim' : 'Não'}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Login History Tab */}
-          <TabsContent value="logins">
-            <Card>
-              <CardHeader>
-                <CardTitle>Histórico de Login</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Membro</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Login</TableHead>
-                        <TableHead>Logout</TableHead>
-                        <TableHead>Navegador</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredLoginHistory.map((login) => (
-                        <TableRow key={login.id}>
-                          <TableCell className="font-medium">
-                            {getProfileName(login.user_id)}
-                          </TableCell>
-                          <TableCell>{getProfileEmail(login.user_id)}</TableCell>
-                          <TableCell>{formatDate(login.login_at)}</TableCell>
-                          <TableCell>
-                            {login.logout_at ? formatDate(login.logout_at) : '-'}
-                          </TableCell>
-                          <TableCell className="max-w-[200px] truncate">
-                            {login.user_agent || '-'}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Page Visits Tab */}
-          <TabsContent value="pages">
-            <Card>
-              <CardHeader>
-                <CardTitle>Tempo de Permanência por Página</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Membro</TableHead>
-                        <TableHead>Página</TableHead>
-                        <TableHead>Entrada</TableHead>
-                        <TableHead>Saída</TableHead>
-                        <TableHead>Duração</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredPageVisits.map((visit) => (
-                        <TableRow key={visit.id}>
-                          <TableCell className="font-medium">
-                            {getProfileName(visit.user_id)}
-                          </TableCell>
-                          <TableCell>{visit.page_path}</TableCell>
-                          <TableCell>{formatDate(visit.entered_at)}</TableCell>
-                          <TableCell>
-                            {visit.left_at ? formatDate(visit.left_at) : 'Ativo'}
-                          </TableCell>
-                          <TableCell className="font-bold text-primary">
-                            {formatDuration(visit.duration_seconds)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Button Clicks Tab */}
-          <TabsContent value="clicks">
-            <Card>
-              <CardHeader>
-                <CardTitle>Histórico de Cliques em Botões</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[500px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Membro</TableHead>
-                        <TableHead>Botão ID</TableHead>
-                        <TableHead>Label</TableHead>
-                        <TableHead>Página</TableHead>
-                        <TableHead>Data/Hora</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredButtonClicks.map((click) => (
-                        <TableRow key={click.id}>
-                          <TableCell className="font-medium">
-                            {getProfileName(click.user_id)}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {click.button_id}
-                          </TableCell>
-                          <TableCell>{click.button_label || '-'}</TableCell>
-                          <TableCell>{click.page_path}</TableCell>
-                          <TableCell>{formatDate(click.clicked_at)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                    ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

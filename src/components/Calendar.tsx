@@ -7,6 +7,7 @@ import { useTracking } from '@/hooks/useTracking';
 import { useAuth } from '@/contexts/AuthContext';
 import CalendarDayCell from './CalendarDayCell';
 import EventModal from './EventModal';
+import NewEventModal from './NewEventModal';
 
 const statusLabels: Record<string, string> = {
   revisado: 'Revisado',
@@ -20,6 +21,8 @@ const Calendar = () => {
   const [gravadores, setGravadores] = useState<Record<number, string>>({});
   const [selectedEvent, setSelectedEvent] = useState<{ day: number; index: number } | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [newEventModalOpen, setNewEventModalOpen] = useState(false);
+  const [newEventDay, setNewEventDay] = useState<number>(1);
   const { toast } = useToast();
   const { user } = useAuth();
   const { trackButtonClick } = useTracking(user?.id);
@@ -109,6 +112,51 @@ const Calendar = () => {
   const closeModal = () => {
     setModalOpen(false);
     setSelectedEvent(null);
+  };
+
+  const openNewEventModal = (day: number) => {
+    setNewEventDay(day);
+    setNewEventModalOpen(true);
+  };
+
+  const closeNewEventModal = () => {
+    setNewEventModalOpen(false);
+  };
+
+  const createNewEvent = async (eventData: { platform: string; title: string }) => {
+    const day = newEventDay;
+    const existingEvents = events[day] || [];
+    const eventIndex = existingEvents.length;
+
+    const newEvent = {
+      day,
+      event_index: eventIndex,
+      platform: eventData.platform,
+      title: eventData.title,
+      status: null,
+    };
+
+    const { data, error } = await supabase
+      .from('calendar_events')
+      .insert(newEvent)
+      .select()
+      .single();
+
+    if (error) {
+      toast({ title: 'Erro', description: 'Erro ao criar evento', variant: 'destructive' });
+      return;
+    }
+
+    setEvents((prev) => {
+      const newEvents = { ...prev };
+      if (!newEvents[day]) {
+        newEvents[day] = [];
+      }
+      newEvents[day] = [...newEvents[day], data as CalendarEvent];
+      return newEvents;
+    });
+
+    toast({ title: 'Sucesso', description: 'Evento criado com sucesso!' });
   };
 
   const updateEventStatus = async (status: string | null) => {
@@ -253,6 +301,7 @@ const Calendar = () => {
                 gravador={gravadores[day] || ''}
                 onGravadorChange={(value) => updateGravador(day, value)}
                 onEventClick={(index) => openModal(day, index)}
+                onAddEvent={() => openNewEventModal(day)}
               />
             );
           })}
@@ -275,7 +324,7 @@ const Calendar = () => {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Event Modal */}
       <EventModal
         open={modalOpen}
         onClose={closeModal}
@@ -285,6 +334,14 @@ const Calendar = () => {
         onStatusChange={updateEventStatus}
         onSavePublicacao={savePublicacao}
         onRemovePublicacao={removePublicacao}
+      />
+
+      {/* New Event Modal */}
+      <NewEventModal
+        open={newEventModalOpen}
+        onClose={closeNewEventModal}
+        day={newEventDay}
+        onSave={createNewEvent}
       />
     </div>
   );
