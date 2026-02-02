@@ -12,6 +12,27 @@ const Stories = () => {
 
   useEffect(() => {
     loadStories();
+
+    // Subscribe to realtime changes for stories
+    const storiesChannel = supabase
+      .channel('stories-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'stories',
+        },
+        (payload) => {
+          console.log('Realtime story received:', payload);
+          loadStories();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(storiesChannel);
+    };
   }, []);
 
   const loadStories = async () => {
