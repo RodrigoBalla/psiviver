@@ -20,6 +20,7 @@ interface NewEventModalProps {
   open: boolean;
   onClose: () => void;
   day: number;
+  month: number;
   onSave: (event: { platform: string; title: string }) => void;
 }
 
@@ -41,6 +42,7 @@ const NewEventModal: React.FC<NewEventModalProps> = ({
   open,
   onClose,
   day,
+  month,
   onSave,
 }) => {
   const [platform, setPlatform] = useState('');
@@ -65,7 +67,7 @@ const NewEventModal: React.FC<NewEventModalProps> = ({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-display text-primary">
-            ➕ Novo Evento - Dia {String(day).padStart(2, '0')}/02/26
+            ➕ Novo Evento - Dia {String(day).padStart(2, '0')}/{String(month).padStart(2, '0')}/26
           </DialogTitle>
         </DialogHeader>
 

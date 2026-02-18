@@ -81,7 +81,7 @@ const Dashboard = () => {
                 PSIVIVER
               </h1>
               <p className="text-muted-foreground">
-                Calendário Editorial - Fevereiro 2026
+                Calendário Editorial - 2026
               </p>
             </div>
             <div className="flex items-center gap-3">

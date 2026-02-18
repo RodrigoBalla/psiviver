@@ -8,28 +8,30 @@ import DraggableEventCard from './DraggableEventCard';
 
 interface DroppableDayCellProps {
   day: number;
+  month: number;
   events: CalendarEvent[];
   gravador: string;
   onGravadorChange: (value: string) => void;
   onEventClick: (index: number) => void;
   onAddEvent: () => void;
   onDeleteEvent: (index: number) => void;
+  onDuplicateEvent: (index: number) => void;
 }
 
 const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
   day,
+  month,
   events,
   gravador,
   onGravadorChange,
   onEventClick,
   onAddEvent,
   onDeleteEvent,
+  onDuplicateEvent,
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `day-${day}`,
-    data: {
-      day,
-    },
+    data: { day },
   });
 
   const eventIds = events.map((e, idx) => e.id || `event-${day}-${idx}`);
@@ -42,16 +44,14 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
         ${isOver ? 'ring-2 ring-primary bg-zinc-800 scale-[1.02]' : ''}
       `}
     >
-      {/* Header with date and add button */}
       <div className="flex justify-between items-center mb-2">
         <div className="font-bold text-base text-teal-400">
-          {String(day).padStart(2, '0')}/02/26
+          {String(day).padStart(2, '0')}/{String(month).padStart(2, '0')}/26
         </div>
         <button
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
-            console.log('Add event clicked for day:', day);
             onAddEvent();
           }}
           className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 transition-colors opacity-60 hover:opacity-100"
@@ -62,7 +62,6 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
         </button>
       </div>
 
-      {/* Gravador input */}
       <Input
         type="text"
         placeholder="Gravador..."
@@ -71,7 +70,6 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
         className="w-full h-8 text-xs mb-3 bg-zinc-800 border-zinc-700 text-zinc-300 placeholder:text-zinc-500"
       />
 
-      {/* Events container with flex-grow to push content */}
       <div className="flex-1 space-y-2">
         <SortableContext items={eventIds} strategy={verticalListSortingStrategy}>
           {events.map((event, index) => (
@@ -81,6 +79,7 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
               index={index}
               onEventClick={onEventClick}
               onDeleteEvent={onDeleteEvent}
+              onDuplicateEvent={onDuplicateEvent}
             />
           ))}
         </SortableContext>

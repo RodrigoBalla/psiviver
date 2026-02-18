@@ -1,6 +1,6 @@
 import { CalendarEvent, Story } from "@/types/calendar";
 
-export const defaultEvents: Record<number, Omit<CalendarEvent, 'id' | 'created_at' | 'updated_at'>[]> = {
+export const defaultEvents: Record<number, Omit<CalendarEvent, 'id' | 'created_at' | 'updated_at' | 'month'>[]> = {
   2: [{
     day: 2,
     event_index: 0,
