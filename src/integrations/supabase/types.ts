@@ -47,6 +47,7 @@ export type Database = {
           day: number
           event_index: number
           id: string
+          month: number
           platform: string
           publicacao: string | null
           roteiro: string | null
@@ -59,6 +60,7 @@ export type Database = {
           day: number
           event_index: number
           id?: string
+          month?: number
           platform: string
           publicacao?: string | null
           roteiro?: string | null
@@ -71,6 +73,7 @@ export type Database = {
           day?: number
           event_index?: number
           id?: string
+          month?: number
           platform?: string
           publicacao?: string | null
           roteiro?: string | null
@@ -85,18 +88,21 @@ export type Database = {
           day: number
           gravador: string | null
           id: string
+          month: number
           updated_at: string
         }
         Insert: {
           day: number
           gravador?: string | null
           id?: string
+          month?: number
           updated_at?: string
         }
         Update: {
           day?: number
           gravador?: string | null
           id?: string
+          month?: number
           updated_at?: string
         }
         Relationships: []
