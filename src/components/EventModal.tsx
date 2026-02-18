@@ -15,11 +15,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import AdminConfirmModal from './AdminConfirmModal';
 
+const monthNames: Record<number, string> = {
+  2: 'Fevereiro',
+  3: 'Março',
+  4: 'Abril',
+  5: 'Maio',
+};
+
 interface EventModalProps {
   open: boolean;
   onClose: () => void;
   event: CalendarEvent | null;
   day: number;
+  month: number;
   gravador?: string;
   onStatusChange: (status: string | null) => void;
   onSavePublicacao: (link: string) => void;
@@ -39,6 +47,7 @@ const EventModal: React.FC<EventModalProps> = ({
   onClose,
   event,
   day,
+  month,
   gravador,
   onStatusChange,
   onSavePublicacao,
@@ -177,7 +186,7 @@ const EventModal: React.FC<EventModalProps> = ({
               <div className="space-y-2 text-sm">
                 <p>
                   <strong className="text-primary">Data:</strong>{' '}
-                  {String(day).padStart(2, '0')} de Fevereiro de 2026
+                  {String(day).padStart(2, '0')} de {monthNames[month] || 'Fevereiro'} de 2026
                 </p>
                 <p>
                   <strong className="text-primary">Plataforma:</strong> {event.platform}

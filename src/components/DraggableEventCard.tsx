@@ -2,16 +2,16 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { CalendarEvent } from '@/types/calendar';
-import { Trash2, GripVertical } from 'lucide-react';
+import { Trash2, GripVertical, Copy } from 'lucide-react';
 
 interface DraggableEventCardProps {
   event: CalendarEvent;
   index: number;
   onEventClick: (index: number) => void;
   onDeleteEvent: (index: number) => void;
+  onDuplicateEvent: (index: number) => void;
 }
 
-// Status-based colors
 const statusColors: Record<string, string> = {
   'revisado': 'bg-blue-600 text-white',
   'producao': 'bg-orange-500 text-white',
@@ -19,7 +19,7 @@ const statusColors: Record<string, string> = {
   'publicado': 'bg-green-500 text-white',
 };
 
-const defaultColor = 'bg-zinc-600 text-white'; // Sem status
+const defaultColor = 'bg-zinc-600 text-white';
 
 const statusLabels: Record<string, string> = {
   revisado: 'REVISADO',
@@ -33,6 +33,7 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
   index,
   onEventClick,
   onDeleteEvent,
+  onDuplicateEvent,
 }) => {
   const {
     attributes,
@@ -43,10 +44,7 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
     isDragging,
   } = useSortable({
     id: event.id || `event-${event.day}-${index}`,
-    data: {
-      event,
-      index,
-    },
+    data: { event, index },
   });
 
   const style = {
@@ -55,6 +53,7 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
   };
 
   const cardColor = event.status ? statusColors[event.status] || defaultColor : defaultColor;
+
   return (
     <div
       ref={setNodeRef}
@@ -65,7 +64,7 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
         ${isDragging ? 'opacity-50 shadow-2xl scale-105 z-50' : 'hover:brightness-110'}
       `}
     >
-      {/* Drag handle - visible on hover */}
+      {/* Drag handle */}
       <div
         {...attributes}
         {...listeners}
@@ -76,17 +75,12 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
       </div>
 
       <div onClick={() => onEventClick(index)} className="space-y-1">
-        {/* Platform badge */}
         <div className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-black/20">
           {event.platform}
         </div>
-        
-        {/* Title */}
-        <div className="text-sm font-medium leading-snug pr-5">
+        <div className="text-sm font-medium leading-snug pr-10">
           {event.title}
         </div>
-        
-        {/* Status label */}
         {event.status && (
           <div className="text-[10px] font-bold uppercase tracking-wide mt-1 opacity-80">
             {statusLabels[event.status]}
@@ -94,17 +88,29 @@ const DraggableEventCard: React.FC<DraggableEventCardProps> = ({
         )}
       </div>
 
-      {/* Delete button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDeleteEvent(index);
-        }}
-        className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-        title="Excluir evento"
-      >
-        <Trash2 className="w-2.5 h-2.5" />
-      </button>
+      {/* Action buttons */}
+      <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDuplicateEvent(index);
+          }}
+          className="w-5 h-5 rounded-full bg-blue-500/80 text-white flex items-center justify-center hover:bg-blue-600"
+          title="Duplicar evento"
+        >
+          <Copy className="w-2.5 h-2.5" />
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteEvent(index);
+          }}
+          className="w-5 h-5 rounded-full bg-red-500/80 text-white flex items-center justify-center hover:bg-red-600"
+          title="Excluir evento"
+        >
+          <Trash2 className="w-2.5 h-2.5" />
+        </button>
+      </div>
     </div>
   );
 };
