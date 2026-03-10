@@ -62,10 +62,10 @@ const Calendar = () => {
 
   // Load events from database
   const loadEvents = useCallback(async () => {
-    const query = supabase
+    const { data, error } = await supabase
       .from('calendar_events')
-      .select('*') as any;
-    const { data, error } = await query.eq('month', currentMonth);
+      .select('*')
+      .eq('month', currentMonth);
 
     if (error) {
       console.error('Error loading events:', error);
