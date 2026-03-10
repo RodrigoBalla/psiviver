@@ -62,10 +62,10 @@ const Calendar = () => {
 
   // Load events from database
   const loadEvents = useCallback(async () => {
-    const query = supabase
+    const { data, error } = await supabase
       .from('calendar_events')
-      .select('*') as any;
-    const { data, error } = await query.eq('month', currentMonth);
+      .select('*')
+      .eq('month', currentMonth);
 
     if (error) {
       console.error('Error loading events:', error);
@@ -93,10 +93,10 @@ const Calendar = () => {
   }, [currentMonth]);
 
   const loadGravadores = useCallback(async () => {
-    const query = supabase
+    const { data, error } = await supabase
       .from('calendar_gravadores')
-      .select('*') as any;
-    const { data, error } = await query.eq('month', currentMonth);
+      .select('*')
+      .eq('month', currentMonth);
 
     if (!error && data) {
       const gravadoresMap: Record<number, string> = {};
@@ -170,11 +170,10 @@ const Calendar = () => {
 
   const createNewEvent = async (eventData: { platform: string; title: string }) => {
     const day = newEventDay;
-    const query = supabase
+    const { data: existingEvents, error: fetchError } = await supabase
       .from('calendar_events')
       .select('event_index')
-      .eq('day', day) as any;
-    const { data: existingEvents, error: fetchError } = await query
+      .eq('day', day)
       .eq('month', currentMonth)
       .order('event_index', { ascending: false })
       .limit(1);
@@ -215,11 +214,10 @@ const Calendar = () => {
 
     trackButtonClick('duplicate-event', `Duplicar: ${event.title}`);
 
-    const dupQuery = supabase
+    const { data: existingEvents } = await supabase
       .from('calendar_events')
       .select('event_index')
-      .eq('day', day) as any;
-    const { data: existingEvents } = await dupQuery
+      .eq('day', day)
       .eq('month', currentMonth)
       .order('event_index', { ascending: false })
       .limit(1);
