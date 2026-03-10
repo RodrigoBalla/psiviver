@@ -170,11 +170,10 @@ const Calendar = () => {
 
   const createNewEvent = async (eventData: { platform: string; title: string }) => {
     const day = newEventDay;
-    const query = supabase
+    const { data: existingEvents, error: fetchError } = await supabase
       .from('calendar_events')
       .select('event_index')
-      .eq('day', day) as any;
-    const { data: existingEvents, error: fetchError } = await query
+      .eq('day', day)
       .eq('month', currentMonth)
       .order('event_index', { ascending: false })
       .limit(1);
