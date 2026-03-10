@@ -93,10 +93,10 @@ const Calendar = () => {
   }, [currentMonth]);
 
   const loadGravadores = useCallback(async () => {
-    const query = supabase
+    const { data, error } = await supabase
       .from('calendar_gravadores')
-      .select('*') as any;
-    const { data, error } = await query.eq('month', currentMonth);
+      .select('*')
+      .eq('month', currentMonth);
 
     if (!error && data) {
       const gravadoresMap: Record<number, string> = {};
