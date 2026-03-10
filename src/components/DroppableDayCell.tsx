@@ -47,7 +47,7 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
       className={`
         bg-zinc-900 rounded-lg min-h-[200px] p-3 flex flex-col transition-all duration-300
         ${isOver ? 'ring-2 ring-primary bg-zinc-800 scale-[1.02]' : ''}
-        ${isToday ? 'ring-2 ring-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.5)] bg-zinc-900/80' : ''}
+        ${isToday ? 'ring-2 ring-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.5)] bg-gradient-to-br from-purple-900/60 via-purple-800/40 to-emerald-900/50' : ''}
       `}
     >
       <div className="flex justify-between items-center mb-2">
