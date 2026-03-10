@@ -9,6 +9,7 @@ import DraggableEventCard from './DraggableEventCard';
 interface DroppableDayCellProps {
   day: number;
   month: number;
+  year: number;
   events: CalendarEvent[];
   gravador: string;
   onGravadorChange: (value: string) => void;
@@ -21,6 +22,7 @@ interface DroppableDayCellProps {
 const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
   day,
   month,
+  year,
   events,
   gravador,
   onGravadorChange,
@@ -34,6 +36,9 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
     data: { day },
   });
 
+  const today = new Date();
+  const isToday = today.getDate() === day && today.getMonth() + 1 === month && today.getFullYear() === year;
+
   const eventIds = events.map((e, idx) => e.id || `event-${day}-${idx}`);
 
   return (
@@ -42,6 +47,7 @@ const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
       className={`
         bg-zinc-900 rounded-lg min-h-[200px] p-3 flex flex-col transition-all duration-300
         ${isOver ? 'ring-2 ring-primary bg-zinc-800 scale-[1.02]' : ''}
+        ${isToday ? 'animate-pulse ring-2 ring-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]' : ''}
       `}
     >
       <div className="flex justify-between items-center mb-2">

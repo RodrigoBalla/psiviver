@@ -488,6 +488,7 @@ const Calendar = () => {
                     key={day}
                     day={day}
                     month={currentMonth}
+                    year={monthInfo.year}
                     events={events[day] || []}
                     gravador={gravadores[day] || ''}
                     onGravadorChange={(value) => updateGravador(day, value)}
