@@ -22,6 +22,7 @@ interface DroppableDayCellProps {
 const DroppableDayCell: React.FC<DroppableDayCellProps> = ({
   day,
   month,
+  year,
   events,
   gravador,
   onGravadorChange,
