@@ -9,6 +9,7 @@ import DraggableEventCard from './DraggableEventCard';
 interface DroppableDayCellProps {
   day: number;
   month: number;
+  year: number;
   events: CalendarEvent[];
   gravador: string;
   onGravadorChange: (value: string) => void;
