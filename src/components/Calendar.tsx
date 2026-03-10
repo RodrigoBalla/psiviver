@@ -214,11 +214,10 @@ const Calendar = () => {
 
     trackButtonClick('duplicate-event', `Duplicar: ${event.title}`);
 
-    const dupQuery = supabase
+    const { data: existingEvents } = await supabase
       .from('calendar_events')
       .select('event_index')
-      .eq('day', day) as any;
-    const { data: existingEvents } = await dupQuery
+      .eq('day', day)
       .eq('month', currentMonth)
       .order('event_index', { ascending: false })
       .limit(1);
