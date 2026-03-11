@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTracking } from '@/hooks/useTracking';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LogOut, Calendar, List, Lightbulb, Video, Shield } from 'lucide-react';
+import { LogOut, Calendar, List, Lightbulb, Video, Shield, FileText } from 'lucide-react';
 import CalendarComponent from '@/components/Calendar';
 import Rotina from '@/components/Rotina';
 import Stories from '@/components/Stories';
