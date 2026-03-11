@@ -44,6 +44,7 @@ const Dashboard = () => {
     'rotina': '/rotina',
     'stories': '/pautasstories',
     'orientacoes': '/Orientações',
+    'relatorios': '/Relatórios',
   };
 
   // Update hash when tab changes
