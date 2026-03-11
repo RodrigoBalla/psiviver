@@ -134,6 +134,13 @@ const Dashboard = () => {
                 <Video className="w-4 h-4 mr-2" />
                 Orientações
               </TabsTrigger>
+              <TabsTrigger
+                value="relatorios"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Relatórios
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
