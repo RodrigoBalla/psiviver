@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Psiviver</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --white: #FFFFFF;
+    --off-white: #F4F9FC;
+    --bg: #EEF5FA;
+    --card: #FFFFFF;
+    --blue: #2F7FC0;
+    --blue2: #4DA3E0;
+    --blue-light: #D6EDFB;
+    --blue-pale: #EBF5FC;
+    --green: #2BAA72;
+    --green2: #48C98D;
+    --green-light: #D3F2E6;
+    --green-pale: #E8F9F3;
+    --teal: #2D9EA8;
+    --dark: #1A3550;
+    --mid: #3D6484;
+    --gray: #8AADC4;
+    --border: rgba(47,127,192,0.13);
+    --border-green: rgba(43,170,114,0.15);
+    --shadow: 0 4px 28px rgba(47,127,192,0.09);
+    --shadow-card: 0 2px 16px rgba(47,127,192,0.07);
+  }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--dark); }
+
+  /* ══ COVER ══ */
+  .cover {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #1A3550 0%, #1F5070 45%, #1A6B5A 100%);
+  }
+
+  .cover-circles {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .cc {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  }
+  .cc1 { width: 700px; height: 700px; top: -200px; right: -180px; }
+  .cc2 { width: 500px; height: 500px; bottom: -150px; left: -120px; }
+  .cc3 { width: 300px; height: 300px; top: 40%; left: 30%; background: radial-gradient(circle, rgba(72,201,141,0.06) 0%, transparent 70%); }
+
+  .cover-lines {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(77,163,224,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,163,224,0.06) 1px, transparent 1px);
+    background-size: 52px 52px;
+  }
+
+  .cover-corner { position: absolute; width: 48px; height: 48px; border-color: rgba(255,255,255,0.15); border-style: solid; }
+  .tl { top: 32px; left: 32px; border-width: 2px 0 0 2px; }
+  .tr { top: 32px; right: 32px; border-width: 2px 2px 0 0; }
+  .bl { bottom: 32px; left: 32px; border-width: 0 0 2px 2px; }
+  .br { bottom: 32px; right: 32px; border-width: 0 2px 2px 0; }
+
+  .cover-inner { position: relative; z-index: 2; padding: 60px 40px; max-width: 740px; }
+
+  .cover-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.22);
+    color: rgba(255,255,255,0.9); font-weight: 700; font-size: 10px; letter-spacing: 4px;
+    text-transform: uppercase; padding: 7px 22px; border-radius: 30px; margin-bottom: 36px;
+  }
+
+  .cover-icon { font-size: 56px; display: block; margin-bottom: 16px; filter: drop-shadow(0 0 24px rgba(72,201,141,0.5)); }
+
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 88px; font-weight: 800; letter-spacing: -2px; line-height: 0.9;
+    color: #ffffff; margin-bottom: 10px;
+    text-shadow: 0 4px 30px rgba(77,163,224,0.35);
+  }
+
+  .cover h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 400; font-style: italic;
+    color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-bottom: 6px;
+  }
+
+  .cover-rule { width: 90px; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(77,163,224,0.8), rgba(72,201,141,0.8), transparent); margin: 24px auto; }
+
+  .cover-sub { font-size: 12px; color: rgba(255,255,255,0.38); letter-spacing: 2px; margin-bottom: 4px; }
+  .cover-agency { font-size: 10px; font-weight: 700; color: rgba(72,201,141,0.9); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 48px; }
+
+  .cover-chips { display: flex; gap: 36px; justify-content: center; flex-wrap: wrap; }
+  .chip .cl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
+  .chip .cv { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); }
+
+  .status-live {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(72,201,141,0.12); border: 1px solid rgba(72,201,141,0.3);
+    color: rgba(72,201,141,1); font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    padding: 5px 16px; border-radius: 20px; margin-bottom: 14px;
+  }
+  .pulse { width: 7px; height: 7px; background: var(--green2); border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.8);} }
+
+  /* ══ PAGE ══ */
+  .page { max-width: 1100px; margin: 0 auto; padding: 70px 40px 40px; }
+
+  /* ══ INTRO BANNER ══ */
+  .intro-banner {
+    background: linear-gradient(135deg, var(--blue-pale), var(--green-pale));
+    border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px 32px; margin-bottom: 48px;
+    display: flex; align-items: flex-start; gap: 18px;
+  }
+  .intro-banner .ib-icon { font-size: 32px; flex-shrink: 0; margin-top: 2px; }
+  .intro-banner h3 {
+    font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700;
+    color: var(--dark); margin-bottom: 8px;
+  }
+  .intro-banner p { font-size: 13.5px; color: var(--mid); line-height: 1.65; }
+  .intro-banner strong { color: var(--blue); }
+
+  /* ══ SECTION TITLE ══ */
+  .stitle { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; margin-top: 52px; }
+  .stitle:first-child { margin-top: 0; }
+  .stitle-ico {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--blue), var(--teal));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(47,127,192,0.25);
+  }
+  .stitle-ico.green { background: linear-gradient(135deg, var(--green), var(--teal)); box-shadow: 0 4px 12px rgba(43,170,114,0.25); }
+  .stitle h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); }
+  .stitle-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,127,192,0.2), transparent); }
+
+  /* ══ METRIC CARDS ══ */
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .metrics-grid.two { grid-template-columns: repeat(2, 1fr); }
+  .metrics-grid.four { grid-template-columns: repeat(4, 1fr); }
+
+  .metric-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 18px; padding: 24px; box-shadow: var(--shadow-card);
+    transition: transform 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .metric-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--green2));
+  }
+  .metric-card.green-accent::before { background: linear-gradient(90deg, var(--green), var(--blue2)); }
+
+  .mc-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gray); display: flex; align-items: center; gap: 7px; margin-bottom: 12px;
+  }
+  .mc-label .mico { font-size: 16px; }
+
+  .mc-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: 6px;
+  }
+  .mc-val.green { color: var(--green); }
+  .mc-val sup { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 400; color: var(--gray); }
+
+  .mc-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-teal { background: rgba(45,158,168,0.1); color: var(--teal); }
+
+  .mc-explain {
+    font-size: 12px; color: var(--mid); line-height: 1.65;
+    padding-top: 12px; border-top: 1px solid rgba(47,127,192,0.08);
+  }
+  .mc-explain strong { color: var(--dark); }
+
+  /* ══ HIGHLIGHT CARD ══ */
+  .highlight-card {
+    background: linear-gradient(135deg, var(--blue), #1A5490);
+    border-radius: 20px; padding: 32px; margin-bottom: 20px;
+    color: white; position: relative; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(47,127,192,0.3);
+  }
+  .highlight-card::after {
+    content: ''; position: absolute; right: -40px; top: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .hc-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 10px; }
+  .hc-val { font-family: 'Playfair Display', serif; font-size: 64px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+  .hc-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
+  .hc-desc { font-size: 13px; opacity: 0.75; line-height: 1.6; max-width: 500px; }
+  .hc-desc strong { opacity: 1; color: #fff; }
+
+  .highlight-card.green-hl { background: linear-gradient(135deg, var(--green), #1A7550); box-shadow: 0 8px 32px rgba(43,170,114,0.3); }
+
+  /* ══ RETENTION BARS ══ */
+  .ret-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: var(--shadow-card); margin-bottom: 20px; }
+  .ret-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .ret-sub { font-size: 12px; color: var(--mid); margin-bottom: 24px; line-height: 1.55; }
+
+  .ret-row { margin-bottom: 20px; }
+  .ret-row-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+  .ret-row-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .ret-row-count { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--blue); }
+  .ret-row-pct { font-size: 11px; color: var(--gray); margin-top: 2px; text-align: right; }
+  .ret-bar { height: 10px; background: var(--blue-light); border-radius: 20px; overflow: hidden; }
+  .ret-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--blue2), var(--green2)); }
+  .ret-explain { font-size: 11.5px; color: var(--mid); margin-top: 7px; line-height: 1.5; }
+
+  /* ══ SUMMARY ══ */
+  .summary {
+    background: linear-gradient(135deg, #EBF6FF, #E6FAF3);
+    border: 1px solid rgba(47,127,192,0.15);
+    border-radius: 24px; padding: 44px; margin-top: 60px; margin-bottom: 60px;
+    position: relative; overflow: hidden;
+  }
+  .summary::before {
+    content: '🧠'; position: absolute; right: 24px; bottom: -20px;
+    font-size: 160px; opacity: 0.04; line-height: 1;
+  }
+
+  .sum-title {
+    font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700;
+    color: var(--dark); margin-bottom: 8px;
+  }
+  .sum-sub { font-size: 13px; color: var(--mid); margin-bottom: 32px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+  .kpi-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 14px; text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+  .kpi-card .kico { font-size: 28px; margin-bottom: 8px; }
+  .kpi-card .kl { font-size: 9px; color: var(--gray); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .kpi-card .kval { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+  .kpi-card .kval.green { color: var(--green); }
+  .kpi-card .kbadge { font-size: 10px; color: var(--teal); font-weight: 700; }
+
+  .takeaways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .takeaway {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: white; border-radius: 14px; padding: 18px;
+    border: 1px solid rgba(47,127,192,0.1); box-shadow: var(--shadow-card);
+  }
+  .takeaway .tico { font-size: 22px; flex-shrink: 0; }
+  .takeaway .ttitle { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .takeaway .tdesc { font-size: 12px; color: var(--mid); line-height: 1.6; }
+  .takeaway .tdesc strong { color: var(--dark); }
+
+  /* ══ SEPARATOR ══ */
+  .sep { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 48px 0; }
+
+  /* ══ NOTE ══ */
+  .note-banner {
+    background: rgba(47,127,192,0.06); border: 1px solid rgba(47,127,192,0.15);
+    border-radius: 14px; padding: 14px 20px; margin-bottom: 32px;
+    font-size: 12.5px; color: var(--mid); display: flex; align-items: center; gap: 10px;
+  }
+  .note-banner strong { color: var(--blue); }
+
+  /* ══ FOOTER ══ */
+  footer {
+    background: linear-gradient(135deg, var(--dark), #1F5070);
+    padding: 28px 48px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .ft-l { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.8; }
+  .ft-l strong { display: block; color: var(--blue2); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  .ft-c { font-size: 11px; color: rgba(255,255,255,0.35); text-align: center; line-height: 1.8; }
+  .ft-brand {
+    font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; font-style: italic;
+    background: linear-gradient(135deg, var(--blue2), var(--green2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .ft-brand small { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; -webkit-text-fill-color: rgba(255,255,255,0.3); font-weight: 400; letter-spacing: 3px; margin-top: 2px; }
+
+  @media (max-width: 768px) {
+    .metrics-grid, .metrics-grid.four { grid-template-columns: 1fr 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .takeaways { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-circles">
+    <div class="cc cc1"></div>
+    <div class="cc cc2"></div>
+    <div class="cc cc3"></div>
+  </div>
+  <div class="cover-lines"></div>
+  <div class="cover-corner tl"></div>
+  <div class="cover-corner tr"></div>
+  <div class="cover-corner bl"></div>
+  <div class="cover-corner br"></div>
+  <div class="cover-inner">
+    <div class="cover-pill">🧠 Psiviver</div>
+    <div class="status-live"><span class="pulse"></span>CAMPANHA ATIVA</div>
+    <span class="cover-icon">🧠</span>
+    <h1>Psiviver</h1>
+    <h2>Relatório de Resultados</h2>
+    <div class="cover-rule"></div>
+    <p class="cover-sub">Campanha de Marketing Digital · Fevereiro 2026</p>
+    <p class="cover-agency">Fevereiro 2026</p>
+    <div class="cover-chips">
+      <div class="chip"><div class="cl">Início</div><div class="cv">01 FEV 2026</div></div>
+      <div class="chip"><div class="cl">Status</div><div class="cv" style="color:rgba(72,201,141,1)">● Ativa</div></div>
+      <div class="chip"><div class="cl">Orçamento</div><div class="cv">R$ 900/mês</div></div>
+      <div class="chip"><div class="cl">Investido</div><div class="cv">R$ 898</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- Intro explicativo -->
+  <div class="intro-banner">
+    <div class="ib-icon">💡</div>
+    <div>
+      <h3>Como ler este relatório?</h3>
+      <p>Se você nunca viu um relatório de tráfego pago, não se preocupe — cada número aqui tem uma explicação simples. Ao longo do documento, você vai entender <strong>o que cada métrica significa</strong>, por que ela importa, e o que os resultados da Psiviver revelam sobre o desempenho da campanha.</p>
+    </div>
+  </div>
+
+  <!-- ══ ALCANCE & VISIBILIDADE ══ -->
+  <div class="stitle" style="margin-top:0">
+    <div class="stitle-ico">👥</div>
+    <h3>Alcance & Visibilidade</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Estas métricas respondem a uma pergunta fundamental: <strong>quantas pessoas viram o anúncio?</strong></span>
+  </div>
+
+  <div class="highlight-card" style="margin-bottom:16px;">
+    <div class="hc-label">Alcance Total — Pessoas Únicas Impactadas</div>
+    <div class="hc-val">51.280</div>
+    <div class="hc-badge">🏆 Resultado extraordinário</div>
+    <div class="hc-desc">Imagine distribuir um folheto para <strong>51.280 pessoas diferentes</strong> — e cada uma delas realmente parou para olhar. O alcance conta quantas pessoas únicas viram o seu anúncio pelo menos uma vez durante o mês. Este número representa o tamanho real da sua audiência conquistada.</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">👁️</span>Impressões</div>
+      <div class="mc-val">82.955</div>
+      <div class="mc-badge badge-blue">▲ Volume massivo de exibições</div>
+      <div class="mc-explain">O anúncio apareceu no ecrã das pessoas <strong>82.955 vezes</strong>. A diferença para o alcance é que algumas pessoas viram mais de uma vez — o que reforça a mensagem.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🔁</span>Frequência</div>
+      <div class="mc-val">1,62</div>
+      <div class="mc-badge badge-teal">● Frequência saudável</div>
+      <div class="mc-explain">Cada pessoa viu o anúncio em média <strong>1,62 vezes</strong>. O número ideal fica entre 1,5 e 3 — o suficiente para fixar a mensagem sem cansar o público. A Psiviver está exatamente na zona ideal.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">💰</span>CPM — Custo por 1.000 Aparições</div>
+      <div class="mc-val green">R$ 12,74</div>
+      <div class="mc-badge badge-green">▲ Muito abaixo da média</div>
+      <div class="mc-explain">Por apenas <strong>R$ 12,74</strong> o anúncio apareceu 1.000 vezes para o público. A média do mercado é R$ 20–40. Isso significa que cada real investido rendeu muito mais visibilidade do que o esperado.</div>
+    </div>
+  </div>
+
+  <!-- ══ CLIQUES & EFICIÊNCIA ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">🖱️</div>
+    <h3>Cliques & Eficiência</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Aqui medimos quem não só <strong>viu</strong> o anúncio, mas teve interesse suficiente para <strong>clicar e saber mais</strong>.</span>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🖱️</span>Cliques no Link</div>
+      <div class="mc-val">3.033</div>
+      <div class="mc-badge badge-blue">▲ Alto volume de interesse</div>
+      <div class="mc-explain">Mais de <strong>3.000 pessoas</strong> sentiram interesse suficiente para clicar no anúncio e descobrir mais sobre a Psiviver. Cada clique representa uma pessoa ativamente curiosa.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">💵</span>CPC — Custo por Clique</div>
+      <div class="mc-val green">R$ 0,35</div>
+      <div class="mc-badge badge-green">🏆 Excepcional — referência nacional</div>
+      <div class="mc-explain">Cada clique custou apenas <strong>R$ 0,35</strong>. No mercado digital, a média é entre R$ 1,50 e R$ 4,00. Isso significa que a Psiviver pagou 4 a 10 vezes menos do que a concorrência por cada interessado.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">📈</span>CTR — Taxa de Cliques</div>
+      <div class="mc-val">3,66<sup>%</sup></div>
+      <div class="mc-badge badge-blue">▲ +3× acima da média do setor</div>
+      <div class="mc-explain">De cada 100 pessoas que viram o anúncio, <strong>3,66 clicaram</strong>. A média do setor de saúde é 1,0–1,5%. Este resultado mostra que o criativo conectou muito bem com o público certo.</div>
+    </div>
+  </div>
+
+  <!-- ══ ENVOLVIMENTO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico green">💬</div>
+    <h3>Envolvimento com a Marca</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Estas métricas revelam <strong>como o público interagiu</strong> com o conteúdo — curtir, comentar, salvar e compartilhar são sinais de que as pessoas se identificaram com a mensagem.</span>
+  </div>
+
+  <div class="highlight-card green-hl" style="margin-bottom:16px;">
+    <div class="hc-label">Visitas ao Perfil — Intenção de Conhecer Melhor</div>
+    <div class="hc-val">2.901</div>
+    <div class="hc-badge">🌟 Quase 3 mil novos visitantes</div>
+    <div class="hc-desc">Após ver o anúncio, <strong>2.901 pessoas foram até o perfil da Psiviver</strong> para conhecer mais. Isso é comportamento de compra — quem visita o perfil está considerando ativamente o serviço.</div>
+  </div>
+
+  <div class="metrics-grid four">
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">❤️</span>Reações ao Post</div>
+      <div class="mc-val green">614</div>
+      <div class="mc-badge badge-green">▲ Aprovação emocional forte</div>
+      <div class="mc-explain"><strong>614 pessoas</strong> reagiram ao post. Reações indicam que o conteúdo gerou uma resposta emocional genuína — o público se identificou com a proposta da Psiviver.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">💾</span>Salvamentos</div>
+      <div class="mc-val">115</div>
+      <div class="mc-badge badge-blue">▲ Intenção futura</div>
+      <div class="mc-explain"><strong>115 pessoas salvaram o post</strong>. Salvar é o sinal mais forte de intenção — significa "quero voltar e ver isso de novo", geralmente antes de tomar uma decisão.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">📤</span>Compartilhamentos</div>
+      <div class="mc-val">64</div>
+      <div class="mc-badge badge-teal">● Indicações espontâneas</div>
+      <div class="mc-explain"><strong>64 pessoas indicaram a Psiviver</strong> para amigos e familiares ao compartilhar o anúncio. É propaganda gratuita — e a mais poderosa que existe.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">💬</span>Comentários</div>
+      <div class="mc-val green">6</div>
+      <div class="mc-badge badge-green">● Conversa pública iniciada</div>
+      <div class="mc-explain">Comentários públicos mostram que as pessoas têm algo a dizer sobre a Psiviver. É o início de uma <strong>comunidade engajada</strong> ao redor da marca.</div>
+    </div>
+  </div>
+
+  <div class="metrics-grid two">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">➕</span>Novos Seguidores</div>
+      <div class="mc-val">465</div>
+      <div class="mc-badge badge-blue">▲ Audiência permanente conquistada</div>
+      <div class="mc-explain"><strong>465 pessoas passaram a seguir a Psiviver</strong> por causa da campanha. Seguidores são ativos permanentes — continuarão vendo seu conteúdo mesmo depois que o anúncio terminar, sem custo adicional.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">🔗</span>Alcance Total do Engajamento</div>
+      <div class="mc-val green">3.726</div>
+      <div class="mc-badge badge-green">▲ Ações combinadas de envolvimento</div>
+      <div class="mc-explain">Some visitas ao perfil (2.901) + salvamentos (115) + compartilhamentos (64) + novos seguidores (465) + comentários (6) + reações (614) = mais de <strong>4.000 ações significativas</strong> de pessoas que foram além de simplesmente ver o anúncio.</div>
+    </div>
+  </div>
+
+  <!-- ══ VÍDEO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">🎬</div>
+    <h3>Desempenho do Vídeo</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>O vídeo é o coração da campanha. Estas métricas mostram <strong>quantas pessoas assistiram e por quanto tempo</strong> — quanto mais tempo assistem, mais conectadas estão com a mensagem.</span>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="highlight-card" style="margin-bottom:0;">
+      <div class="hc-label">Visualizações de Vídeo</div>
+      <div class="hc-val">84.098</div>
+      <div class="hc-badge">▶️ 84 mil plays</div>
+      <div class="hc-desc">O vídeo foi assistido <strong>84.098 vezes</strong>. É o principal veículo que apresentou a Psiviver para dezenas de milhares de pessoas.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">⏱️</span>Tempo Médio de Visualização</div>
+      <div class="mc-val">7<sup>s</sup></div>
+      <div class="mc-badge badge-blue">▲ Acima da média do setor</div>
+      <div class="mc-explain">Em média, cada pessoa assistiu <strong>7 segundos</strong> do vídeo. Pode parecer pouco, mas no mundo de redes sociais onde a atenção é disputada, 7 segundos é acima da média de 3–5s do mercado. O conteúdo prendeu a atenção.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">✅</span>Quem Assistiu Até o Fim</div>
+      <div class="mc-val green">4.581</div>
+      <div class="mc-badge badge-green">▲ Audiência totalmente envolvida</div>
+      <div class="mc-explain"><strong>4.581 pessoas</strong> assistiram ao vídeo completo (75–100%). Isso é um grupo altamente qualificado — quem chega ao fim tem real interesse no que foi apresentado.</div>
+    </div>
+  </div>
+
+  <!-- BARRA DE RETENÇÃO -->
+  <div class="ret-card">
+    <div class="ret-title">📊 Jornada de Atenção do Vídeo</div>
+    <div class="ret-sub">Veja como o público acompanhou o vídeo do início ao fim. Cada barra mostra quantas pessoas ainda estavam assistindo naquele ponto — quanto mais pessoas chegam ao final, mais envolvente é o conteúdo.</div>
+
+    <div class="ret-row">
+      <div class="ret-row-header">
+        <div>
+          <div class="ret-row-label">🟢 Assistiram 25% do vídeo</div>
+          <div style="font-size:11.5px; color:var(--mid); margin-top:3px;">Pessoas que passaram dos primeiros segundos — se interessaram pelo início</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ret-row-count">7.073</div>
+          <div class="ret-row-pct">8,4% do total de plays</div>
+        </div>
+      </div>
+      <div class="ret-bar"><div class="ret-fill" style="width:84%"></div></div>
+      <div class="ret-explain">✅ <strong>7.073 pessoas</strong> não pularam o vídeo nos primeiros segundos — o começo capturou atenção imediatamente.</div>
+    </div>
+
+    <div class="ret-row">
+      <div class="ret-row-header">
+        <div>
+          <div class="ret-row-label">🔵 Assistiram 50% do vídeo</div>
+          <div style="font-size:11.5px; color:var(--mid); margin-top:3px;">Pessoas que chegaram até a metade — conteúdo relevante o suficiente para continuar</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ret-row-count">3.908</div>
+          <div class="ret-row-pct">4,6% do total de plays</div>
+        </div>
+      </div>
+      <div class="ret-bar"><div class="ret-fill" style="width:55%"></div></div>
+      <div class="ret-explain">✅ <strong>3.908 pessoas</strong> chegaram na metade — demonstram interesse genuíno na proposta apresentada.</div>
+    </div>
+
+    <div class="ret-row" style="margin-bottom:0;">
+      <div class="ret-row-header">
+        <div>
+          <div class="ret-row-label">🌟 Assistiram 75–100% do vídeo</div>
+          <div style="font-size:11.5px; color:var(--mid); margin-top:3px;">Pessoas que ficaram praticamente até o fim — público altamente qualificado</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="ret-row-count">4.581</div>
+          <div class="ret-row-pct">5,4% do total de plays</div>
+        </div>
+      </div>
+      <div class="ret-bar"><div class="ret-fill" style="width:65%"></div></div>
+      <div class="ret-explain">🏆 <strong>4.581 pessoas assistiram quase tudo</strong>. Note que este número é <em>maior</em> do que quem viu 50% — isso indica que quem passa da metade se compromete a terminar. Sinal de conteúdo muito forte.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ══ RESUMO EXECUTIVO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">📝</div>
+    <h3>Resumo Executivo</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="summary">
+    <div class="sum-title">🧠 &nbsp; Análise Geral — Psiviver · Fevereiro 2026</div>
+    <div class="sum-sub">Com R$ 898 investidos, a campanha da Psiviver entregou resultados excepcionais em todas as frentes.</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kico">👥</div>
+        <div class="kl">Alcance</div>
+        <div class="kval">51.280</div>
+        <div class="kbadge">pessoas impactadas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kico">🖱️</div>
+        <div class="kl">Cliques</div>
+        <div class="kval">3.033</div>
+        <div class="kbadge">R$ 0,35 por clique</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kico">📈</div>
+        <div class="kl">CTR</div>
+        <div class="kval green">3,66%</div>
+        <div class="kbadge">3× acima da média</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kico">🎬</div>
+        <div class="kl">Plays do Vídeo</div>
+        <div class="kval">84.098</div>
+        <div class="kbadge">4.581 viram tudo</div>
+      </div>
+    </div>
+
+    <div class="takeaways">
+      <div class="takeaway">
+        <div class="tico">💰</div>
+        <div>
+          <div class="ttitle">Custo Imbatível por Clique</div>
+          <div class="tdesc">R$ 0,35 por clique é <strong>até 10× mais barato</strong> do que a média do mercado de saúde/bem-estar, que costuma pagar R$ 2–4 por clique. Cada real rendeu muito mais aqui.</div>
+        </div>
+      </div>
+      <div class="takeaway">
+        <div class="tico">🎯</div>
+        <div>
+          <div class="ttitle">Público Certo, Mensagem Certa</div>
+          <div class="tdesc">CTR de <strong>3,66%</strong> (vs média de 1%) e 2.901 visitas ao perfil mostram que o anúncio encontrou exatamente quem está aberto à proposta da Psiviver.</div>
+        </div>
+      </div>
+      <div class="takeaway">
+        <div class="tico">📊</div>
+        <div>
+          <div class="ttitle">Vídeo com Poder de Retenção</div>
+          <div class="tdesc"><strong>4.581 pessoas</strong> assistiram o vídeo praticamente até o fim — e este número supera quem viu apenas 50%, indicando que o conteúdo prende quem começa a assistir.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INSTAGRAM ORGÂNICO ══ -->
+  <div class="stitle" style="margin-top: 60px;">
+    <div class="stitle-ico green">📱</div>
+    <h3>Crescimento Orgânico no Instagram</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Além dos anúncios pagos, o perfil da Psiviver também cresceu de forma <strong>orgânica</strong> — ou seja, sem investir dinheiro. Estes são os resultados do próprio conteúdo publicado, separados dos anúncios.</span>
+  </div>
+
+  <!-- Resumo do mês -->
+  <div class="highlight-card green-hl" style="margin-bottom:16px;">
+    <div class="hc-label">🔥 Fevereiro foi um mês histórico para o perfil</div>
+    <div class="hc-val">+324%</div>
+    <div class="hc-badge">Visualizações de reels e posts vs Janeiro</div>
+    <div class="hc-desc">Em Fevereiro, o conteúdo orgânico da Psiviver explodiu: <strong>21 mil visualizações</strong> de reels e posts — um crescimento de 324% comparado a Janeiro. O conteúdo está chamando atenção e ganhando tração no algoritmo.</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">👁️</span>Visualizações Totais (orgânico)</div>
+      <div class="mc-val green">58.340</div>
+      <div class="mc-badge badge-green">72,1% vieram de anúncios</div>
+      <div class="mc-explain">O perfil teve <strong>58.340 visualizações no total</strong>. Desse total, 72,1% vieram dos anúncios e 27,9% foram orgânicos — ou seja, pessoas que encontraram o conteúdo naturalmente, sem publicidade.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🌍</span>Contas Alcançadas</div>
+      <div class="mc-val">31.094</div>
+      <div class="mc-badge badge-blue">▲ +273,6% vs período anterior</div>
+      <div class="mc-explain">O perfil chegou a <strong>31.094 contas diferentes</strong> — um crescimento de 273% em relação ao mês anterior. Isso significa que a Psiviver está sendo descoberta por muito mais pessoas.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">👥</span>Seguidores em Fevereiro</div>
+      <div class="mc-val green">608</div>
+      <div class="mc-badge badge-green">▲ +527 comparado a Janeiro</div>
+      <div class="mc-explain">O perfil terminou Fevereiro com <strong>608 seguidores conquistados no mês</strong> — um salto de +527 em relação a Janeiro. Cada seguidor é um potencial cliente que passa a acompanhar a Psiviver todos os dias.</div>
+    </div>
+  </div>
+
+  <div class="metrics-grid two">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🎬</span>Visualizações de Não Seguidores</div>
+      <div class="mc-val">62<sup>%</sup></div>
+      <div class="mc-badge badge-blue">▲ +415% vs Janeiro</div>
+      <div class="mc-explain"><strong>62% das visualizações</strong> vieram de pessoas que ainda não seguem a Psiviver — e esse número cresceu 415% em relação a Janeiro. O algoritmo está distribuindo o conteúdo para novas audiências, ampliando o alcance de forma orgânica.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">📅</span>Conteúdo Publicado em Fevereiro</div>
+      <div class="mc-val green">10</div>
+      <div class="mc-badge badge-green">6 reels + 4 posts</div>
+      <div class="mc-explain">Foram publicados <strong>6 reels e 4 posts</strong> em Fevereiro — 5 publicações a mais do que no mês anterior. O Instagram recomenda manter ao menos 2 reels + 1 post por semana para manter o ritmo de crescimento.</div>
+    </div>
+  </div>
+
+  <!-- Melhores horários -->
+  <div class="ret-card" style="margin-bottom:20px;">
+    <div class="ret-title">🕐 Melhores Horários para Publicar</div>
+    <div class="ret-sub">O Instagram identificou quando seus seguidores estão mais ativos. Publicar nesses horários aumenta as chances de mais pessoas verem o conteúdo logo quando é postado — o que ajuda o algoritmo a distribuir mais.</div>
+    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:14px; margin-top:8px;">
+      <div style="background:var(--blue-pale); border:1px solid var(--border); border-radius:14px; padding:18px; text-align:center;">
+        <div style="font-size:28px; margin-bottom:8px;">📅</div>
+        <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--blue); margin-bottom:6px;">Segunda-feira</div>
+        <div style="font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--dark);">18h – 21h</div>
+        <div style="font-size:11px; color:var(--mid); margin-top:6px;">Tarde/Noite</div>
+      </div>
+      <div style="background:var(--green-pale); border:1px solid var(--border-green); border-radius:14px; padding:18px; text-align:center;">
+        <div style="font-size:28px; margin-bottom:8px;">📅</div>
+        <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--green); margin-bottom:6px;">Sexta-feira</div>
+        <div style="font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--dark);">18h – 21h</div>
+        <div style="font-size:11px; color:var(--mid); margin-top:6px;">Tarde/Noite</div>
+      </div>
+      <div style="background:var(--blue-pale); border:1px solid var(--border); border-radius:14px; padding:18px; text-align:center;">
+        <div style="font-size:28px; margin-bottom:8px;">📅</div>
+        <div style="font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--blue); margin-bottom:6px;">Domingo</div>
+        <div style="font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--dark);">18h – 21h</div>
+        <div style="font-size:11px; color:var(--mid); margin-top:6px;">Tarde/Noite</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Público orgânico -->
+  <div class="ret-card" style="margin-bottom:20px;">
+    <div class="ret-title">🎯 Quem Está Assistindo o Conteúdo</div>
+    <div class="ret-sub">Conhecer o perfil de quem assiste permite criar conteúdo cada vez mais direcionado — e garante que a mensagem da Psiviver chega para as pessoas certas.</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-top:8px;">
+
+      <!-- Gênero -->
+      <div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Gênero</div>
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:6px;"><span>👩 Mulheres</span><span style="font-weight:700; color:var(--green);">87,9%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:87.9%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:6px;"><span>👨 Homens</span><span style="font-weight:700; color:var(--blue);">12,1%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:12.1%;"></div></div>
+        </div>
+        <div style="font-size:11px; color:var(--mid); margin-top:10px; line-height:1.5;">O público é predominantemente feminino — dado essencial para direcionar o tom e o visual dos conteúdos.</div>
+      </div>
+
+      <!-- Faixa etária -->
+      <div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Faixa Etária</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>45–54 anos</span><span style="font-weight:700; color:var(--blue);">28,4%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:85%;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>55–64 anos</span><span style="font-weight:700; color:var(--blue);">24,1%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:72%;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>35–44 anos</span><span style="font-weight:700; color:var(--blue);">17,3%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:52%;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>65+ anos</span><span style="font-weight:700; color:var(--blue);">17,1%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:51%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Cidades -->
+      <div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Principais Cidades</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🏙️ São Paulo</span><span style="font-weight:700; color:var(--green);">9,5%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:95%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🏙️ Rio de Janeiro</span><span style="font-weight:700; color:var(--green);">3,8%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:38%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🏙️ Recife</span><span style="font-weight:700; color:var(--green);">2,6%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:26%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🏙️ Belo Horizonte</span><span style="font-weight:700; color:var(--green);">2,3%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:23%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+        </div>
+        <div style="font-size:11px; color:var(--mid); margin-top:10px;">99,8% do público é brasileiro.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONTEÚDOS QUE MAIS PERFORMARAM ══ -->
+  <div class="stitle" style="margin-top:52px;">
+    <div class="stitle-ico">🏆</div>
+    <h3>Conteúdos que Mais Performaram</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Estes foram os posts que <strong>chamaram mais atenção</strong> do público em Fevereiro. Entender o que funciona ajuda a criar mais conteúdo no mesmo estilo.</span>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+
+    <!-- 1º lugar -->
+    <div style="background:var(--white); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:var(--shadow-card); position:relative;">
+      <div style="background:linear-gradient(135deg,var(--blue),#1A5490); padding:16px 20px; display:flex; align-items:center; gap:12px;">
+        <div style="background:rgba(255,255,255,0.2); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:white; font-family:'Playfair Display',serif; flex-shrink:0;">1</div>
+        <div>
+          <div style="font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.6);">Melhor Conteúdo do Mês</div>
+          <div style="font-size:13px; font-weight:700; color:white;">🏆 Publicado em 13 de Fevereiro</div>
+        </div>
+      </div>
+      <div style="padding:22px;">
+        <div style="background:var(--blue-pale); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; color:var(--dark); margin-bottom:6px; font-family:'Playfair Display',serif; font-style:italic;">"Psicólogo, você ajuda todo mundo... mas sua clínica é solitária."</div>
+          <div style="font-size:11.5px; color:var(--mid); line-height:1.6;">Post/Reel abordando um problema real e profundo que os psicólogos enfrentam — clínica sem estrutura de apoio. A mensagem tocou diretamente na dor do público.</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="text-align:center; background:var(--bg); border-radius:12px; padding:14px 10px;">
+            <div style="font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--blue);">18 mil</div>
+            <div style="font-size:10px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">Visualizações</div>
+          </div>
+          <div style="text-align:center; background:var(--green-pale); border-radius:12px; padding:14px 10px;">
+            <div style="font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--green);">#1</div>
+            <div style="font-size:10px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">Ranking do Mês</div>
+          </div>
+        </div>
+        <a href="https://www.instagram.com/p/DUWWrTsEqKa/?img_index=1" target="_blank" style="display:block; margin-top:14px; text-align:center; background:linear-gradient(135deg,var(--blue),var(--teal)); color:white; text-decoration:none; padding:10px; border-radius:10px; font-size:12px; font-weight:700; letter-spacing:1px;">📲 Ver Post no Instagram</a>
+      </div>
+    </div>
+
+    <!-- 2º lugar -->
+    <div style="background:var(--white); border:1px solid var(--border-green); border-radius:20px; overflow:hidden; box-shadow:var(--shadow-card); position:relative;">
+      <div style="background:linear-gradient(135deg,var(--green),#1A7550); padding:16px 20px; display:flex; align-items:center; gap:12px;">
+        <div style="background:rgba(255,255,255,0.2); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:white; font-family:'Playfair Display',serif; flex-shrink:0;">2</div>
+        <div>
+          <div style="font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.6);">2º Melhor Conteúdo</div>
+          <div style="font-size:13px; font-weight:700; color:white;">🥈 Publicado em 10 de Fevereiro</div>
+        </div>
+      </div>
+      <div style="padding:22px;">
+        <div style="background:var(--green-pale); border:1px solid var(--border-green); border-radius:14px; padding:16px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; color:var(--dark); margin-bottom:6px; font-family:'Playfair Display',serif; font-style:italic;">"Na psicologia, quem faz de tudo um pouco... some do mercado."</div>
+          <div style="font-size:11.5px; color:var(--mid); line-height:1.6;">Mensagem poderosa sobre especialização e posicionamento para psicólogos. O Instagram destacou este post como conteúdo que chamou atenção — superou todos os outros do mês anterior.</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="text-align:center; background:var(--bg); border-radius:12px; padding:14px 10px;">
+            <div style="font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--green);">6,9 mil</div>
+            <div style="font-size:10px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">Visualizações</div>
+          </div>
+          <div style="text-align:center; background:var(--blue-pale); border-radius:12px; padding:14px 10px;">
+            <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--blue);">+1 seg</div>
+            <div style="font-size:10px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">Novo seguidor</div>
+          </div>
+        </div>
+        <a href="https://www.instagram.com/p/DUtNx1tDih9/" target="_blank" style="display:block; margin-top:14px; text-align:center; background:linear-gradient(135deg,var(--green),var(--teal)); color:white; text-decoration:none; padding:10px; border-radius:10px; font-size:12px; font-weight:700; letter-spacing:1px;">📲 Ver Post no Instagram</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Insight sobre os conteúdos -->
+  <div class="ret-card" style="margin-bottom:20px;">
+    <div class="ret-title">💡 O que esses resultados revelam?</div>
+    <div class="ret-sub">Os dois posts que mais performaram têm algo em comum: <strong>falam diretamente de uma dor real</strong> que os psicólogos vivem. Isso é um sinal claro de que o público da Psiviver responde melhor a conteúdos que identificam um problema antes de apresentar uma solução.</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px;">
+      <div class="takeaway">
+        <div class="tico">🎯</div>
+        <div>
+          <div class="ttitle">Linguagem que conecta</div>
+          <div class="tdesc">Frases diretas e provocativas performam melhor. O público reconhece a dor e para para assistir.</div>
+        </div>
+      </div>
+      <div class="takeaway">
+        <div class="tico">📈</div>
+        <div>
+          <div class="ttitle">Crescimento de 368%</div>
+          <div class="tdesc">As visualizações de reels e posts cresceram <strong>368%</strong> em relação ao mês anterior. O algoritmo está premiando o conteúdo da Psiviver.</div>
+        </div>
+      </div>
+      <div class="takeaway">
+        <div class="tico">🔁</div>
+        <div>
+          <div class="ttitle">Replicar o que funciona</div>
+          <div class="tdesc">Continuar criando conteúdo no mesmo estilo — dores reais, posicionamento claro — é a fórmula para manter o crescimento em Março.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-l">
+    <strong>Relatório de Métricas</strong>
+    Fevereiro 2026 · Campanha Ativa
+  </div>
+  <div class="ft-c">
+    Psiviver · Campanha de Fevereiro<br>
+    <small style="color:rgba(255,255,255,0.2)">Documento confidencial · Uso interno</small>
+  </div>
+  <div>
+    <div class="ft-brand">Psiviver<small>Relatório de Campanha</small></div>
+  </div>
+</footer>
+
+</body>
+</html>

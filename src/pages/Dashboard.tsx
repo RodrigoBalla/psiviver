@@ -4,13 +4,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTracking } from '@/hooks/useTracking';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LogOut, Calendar, List, Lightbulb, Video, Shield } from 'lucide-react';
+import { LogOut, Calendar, List, Lightbulb, Video, Shield, FileText } from 'lucide-react';
 import CalendarComponent from '@/components/Calendar';
 import Rotina from '@/components/Rotina';
 import Stories from '@/components/Stories';
 import Orientacoes from '@/components/Orientacoes';
 
-const TAB_NAMES = ['calendario', 'rotina', 'stories', 'orientacoes'] as const;
+const TAB_NAMES = ['calendario', 'rotina', 'stories', 'orientacoes', 'relatorios'] as const;
 type TabName = typeof TAB_NAMES[number];
 
 const Dashboard = () => {
@@ -44,6 +44,7 @@ const Dashboard = () => {
     'rotina': '/rotina',
     'stories': '/pautasstories',
     'orientacoes': '/Orientações',
+    'relatorios': '/Relatórios',
   };
 
   // Update hash when tab changes
@@ -133,6 +134,13 @@ const Dashboard = () => {
                 <Video className="w-4 h-4 mr-2" />
                 Orientações
               </TabsTrigger>
+              <TabsTrigger
+                value="relatorios"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Relatórios
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -152,6 +160,16 @@ const Dashboard = () => {
           </TabsContent>
           <TabsContent value="orientacoes" className="mt-0">
             <Orientacoes />
+          </TabsContent>
+          <TabsContent value="relatorios" className="mt-0">
+            <div className="rounded-lg overflow-hidden border border-border bg-card">
+              <iframe
+                src="/reports/relatorio-fevereiro-2026.html"
+                className="w-full border-0"
+                style={{ minHeight: '80vh' }}
+                title="Relatório de Fevereiro 2026"
+              />
+            </div>
           </TabsContent>
         </Tabs>
       </main>
