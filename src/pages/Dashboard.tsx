@@ -161,6 +161,16 @@ const Dashboard = () => {
           <TabsContent value="orientacoes" className="mt-0">
             <Orientacoes />
           </TabsContent>
+          <TabsContent value="relatorios" className="mt-0">
+            <div className="rounded-lg overflow-hidden border border-border bg-card">
+              <iframe
+                src="/reports/relatorio-fevereiro-2026.html"
+                className="w-full border-0"
+                style={{ minHeight: '80vh' }}
+                title="Relatório de Fevereiro 2026"
+              />
+            </div>
+          </TabsContent>
         </Tabs>
       </main>
     </div>
