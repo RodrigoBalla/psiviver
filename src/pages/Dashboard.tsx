@@ -10,7 +10,7 @@ import Rotina from '@/components/Rotina';
 import Stories from '@/components/Stories';
 import Orientacoes from '@/components/Orientacoes';
 
-const TAB_NAMES = ['calendario', 'rotina', 'stories', 'orientacoes'] as const;
+const TAB_NAMES = ['calendario', 'rotina', 'stories', 'orientacoes', 'relatorios'] as const;
 type TabName = typeof TAB_NAMES[number];
 
 const Dashboard = () => {
