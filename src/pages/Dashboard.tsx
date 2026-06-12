@@ -4,27 +4,78 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTracking } from '@/hooks/useTracking';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LogOut, Calendar, List, Lightbulb, Video, Shield, FileText } from 'lucide-react';
+import { LogOut, Calendar, List, Lightbulb, Video, Shield, FileText, LayoutDashboard, ChevronLeft, ChevronRight, Users } from 'lucide-react';
 import CalendarComponent from '@/components/Calendar';
 import Rotina from '@/components/Rotina';
 import Stories from '@/components/Stories';
 import Orientacoes from '@/components/Orientacoes';
+import { KanbanBoard } from '@/components/KanbanBoard';
+import LeadsDashboard from '@/components/LeadsDashboard';
 
-const TAB_NAMES = ['calendario', 'rotina', 'stories', 'orientacoes', 'relatorios'] as const;
+const REPORT_MONTHS = [
+  { key: 'fevereiro', label: 'Fevereiro 2026', src: '/reports/relatorio-fevereiro-2026.html' },
+  { key: 'marco', label: 'Março 2026', src: '/reports/relatorio-marco-2026.html' },
+  { key: 'abril', label: 'Abril 2026', src: '/reports/relatorio-abril-2026.html' },
+  { key: 'maio', label: 'Maio 2026', src: '/reports/relatorio-maio-2026.html' },
+] as const;
+
+const ReportTabs = () => {
+  const [activeReport, setActiveReport] = useState(REPORT_MONTHS[REPORT_MONTHS.length - 1].key);
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-4">
+        {REPORT_MONTHS.map((month) => (
+          <Button
+            key={month.key}
+            variant={activeReport === month.key ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setActiveReport(month.key)}
+            className={activeReport === month.key ? 'bg-primary text-primary-foreground' : ''}
+          >
+            <FileText className="w-4 h-4 mr-2" />
+            {month.label}
+          </Button>
+        ))}
+      </div>
+      {REPORT_MONTHS.map((month) => (
+        activeReport === month.key && (
+          <div key={month.key} className="rounded-lg overflow-hidden border border-border bg-card">
+            <iframe
+              src={month.src}
+              className="w-full border-0"
+              style={{ minHeight: '80vh' }}
+              title={`Relatório de ${month.label}`}
+            />
+          </div>
+        )
+      ))}
+    </div>
+  );
+};
+
+const TAB_NAMES = ['kanban', 'calendario', 'rotina', 'stories', 'orientacoes', 'relatorios', 'leads'] as const;
 type TabName = typeof TAB_NAMES[number];
 
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut, profile, user } = useAuth();
-  
+  const { signOut, profile, user, loading } = useAuth();
+
+  // Auth guard — redirect to login if user is not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/login', { replace: true });
+    }
+  }, [loading, user, navigate]);
+
   // Get initial tab from hash or default to 'calendario'
   const getTabFromHash = (): TabName => {
     const hash = location.hash.replace('#', '');
     if (TAB_NAMES.includes(hash as TabName)) {
       return hash as TabName;
     }
-    return 'calendario';
+    return 'kanban';
   };
 
   const [activeTab, setActiveTab] = useState<TabName>(getTabFromHash);
@@ -40,11 +91,13 @@ const Dashboard = () => {
 
   // Map tab to display path for tracking
   const TAB_TO_PATH: Record<TabName, string> = {
+    'kanban': '/kanban',
     'calendario': '/calendário',
     'rotina': '/rotina',
     'stories': '/pautasstories',
     'orientacoes': '/Orientações',
     'relatorios': '/Relatórios',
+    'leads': '/leads',
   };
 
   // Update hash when tab changes
@@ -70,6 +123,20 @@ const Dashboard = () => {
     trackButtonClick('admin', 'Painel Administrativo');
     navigate('/admin');
   };
+
+  // While auth resolves, show loading screen (prevents rendering with null user)
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center gradient-animated">
+        <div className="text-center">
+          <h1 className="text-4xl font-display font-bold text-primary animate-glow tracking-widest mb-4">
+            PSIVIVER
+          </h1>
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,6 +174,13 @@ const Dashboard = () => {
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">
             <TabsList className="bg-card/50 border border-border">
               <TabsTrigger
+                value="kanban"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <LayoutDashboard className="w-4 h-4 mr-2" />
+                Kanban
+              </TabsTrigger>
+              <TabsTrigger
                 value="calendario"
                 className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
@@ -141,6 +215,13 @@ const Dashboard = () => {
                 <FileText className="w-4 h-4 mr-2" />
                 Relatórios
               </TabsTrigger>
+              <TabsTrigger
+                value="leads"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Leads
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -149,6 +230,9 @@ const Dashboard = () => {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={handleTabChange}>
+          <TabsContent value="kanban" className="mt-0 h-[80vh]">
+            <KanbanBoard />
+          </TabsContent>
           <TabsContent value="calendario" className="mt-0">
             <CalendarComponent />
           </TabsContent>
@@ -162,14 +246,10 @@ const Dashboard = () => {
             <Orientacoes />
           </TabsContent>
           <TabsContent value="relatorios" className="mt-0">
-            <div className="rounded-lg overflow-hidden border border-border bg-card">
-              <iframe
-                src="/reports/relatorio-fevereiro-2026.html"
-                className="w-full border-0"
-                style={{ minHeight: '80vh' }}
-                title="Relatório de Fevereiro 2026"
-              />
-            </div>
+            <ReportTabs />
+          </TabsContent>
+          <TabsContent value="leads" className="mt-0 h-[80vh]">
+            <LeadsDashboard />
           </TabsContent>
         </Tabs>
       </main>

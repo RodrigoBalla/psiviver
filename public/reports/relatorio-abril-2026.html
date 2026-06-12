@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Psiviver — Abril 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --white: #FFFFFF;
+    --off-white: #F4F9FC;
+    --bg: #EEF5FA;
+    --card: #FFFFFF;
+    --blue: #2F7FC0;
+    --blue2: #4DA3E0;
+    --blue-light: #D6EDFB;
+    --blue-pale: #EBF5FC;
+    --green: #2BAA72;
+    --green2: #48C98D;
+    --green-light: #D3F2E6;
+    --green-pale: #E8F9F3;
+    --teal: #2D9EA8;
+    --dark: #1A3550;
+    --mid: #3D6484;
+    --gray: #8AADC4;
+    --border: rgba(47,127,192,0.13);
+    --border-green: rgba(43,170,114,0.15);
+    --shadow: 0 4px 28px rgba(47,127,192,0.09);
+    --shadow-card: 0 2px 16px rgba(47,127,192,0.07);
+  }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--dark); }
+
+  /* ══ COVER ══ */
+  .cover {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #1A3550 0%, #1F5070 45%, #1A6B5A 100%);
+  }
+
+  .cover-circles { position: absolute; inset: 0; pointer-events: none; }
+  .cc { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%); }
+  .cc1 { width: 700px; height: 700px; top: -200px; right: -180px; }
+  .cc2 { width: 500px; height: 500px; bottom: -150px; left: -120px; }
+  .cc3 { width: 300px; height: 300px; top: 40%; left: 30%; background: radial-gradient(circle, rgba(72,201,141,0.06) 0%, transparent 70%); }
+
+  .cover-lines {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(77,163,224,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,163,224,0.06) 1px, transparent 1px);
+    background-size: 52px 52px;
+  }
+
+  .cover-corner { position: absolute; width: 48px; height: 48px; border-color: rgba(255,255,255,0.15); border-style: solid; }
+  .tl { top: 32px; left: 32px; border-width: 2px 0 0 2px; }
+  .tr { top: 32px; right: 32px; border-width: 2px 2px 0 0; }
+  .bl { bottom: 32px; left: 32px; border-width: 0 0 2px 2px; }
+  .br { bottom: 32px; right: 32px; border-width: 0 2px 2px 0; }
+
+  .cover-inner { position: relative; z-index: 2; padding: 60px 40px; max-width: 740px; }
+
+  .cover-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.22);
+    color: rgba(255,255,255,0.9); font-weight: 700; font-size: 10px; letter-spacing: 4px;
+    text-transform: uppercase; padding: 7px 22px; border-radius: 30px; margin-bottom: 36px;
+  }
+
+  .cover-icon { font-size: 56px; display: block; margin-bottom: 16px; filter: drop-shadow(0 0 24px rgba(72,201,141,0.5)); }
+
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 88px; font-weight: 800; letter-spacing: -2px; line-height: 0.9;
+    color: #ffffff; margin-bottom: 10px;
+    text-shadow: 0 4px 30px rgba(77,163,224,0.35);
+  }
+
+  .cover h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 400; font-style: italic;
+    color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-bottom: 6px;
+  }
+
+  .cover-rule { width: 90px; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(77,163,224,0.8), rgba(72,201,141,0.8), transparent); margin: 24px auto; }
+
+  .cover-sub { font-size: 12px; color: rgba(255,255,255,0.38); letter-spacing: 2px; margin-bottom: 4px; }
+  .cover-agency { font-size: 10px; font-weight: 700; color: rgba(72,201,141,0.9); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 48px; }
+
+  .cover-chips { display: flex; gap: 36px; justify-content: center; flex-wrap: wrap; }
+  .chip .cl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
+  .chip .cv { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); }
+
+  .status-live {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(72,201,141,0.12); border: 1px solid rgba(72,201,141,0.3);
+    color: rgba(72,201,141,1); font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    padding: 5px 16px; border-radius: 20px; margin-bottom: 14px;
+  }
+  .pulse { width: 7px; height: 7px; background: var(--green2); border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.8);} }
+
+  /* ══ PAGE ══ */
+  .page { max-width: 1100px; margin: 0 auto; padding: 70px 40px 40px; }
+
+  /* ══ INTRO BANNER ══ */
+  .intro-banner {
+    background: linear-gradient(135deg, var(--blue-pale), var(--green-pale));
+    border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px 32px; margin-bottom: 48px;
+    display: flex; align-items: flex-start; gap: 18px;
+  }
+  .intro-banner .ib-icon { font-size: 32px; flex-shrink: 0; margin-top: 2px; }
+  .intro-banner h3 { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .intro-banner p { font-size: 13.5px; color: var(--mid); line-height: 1.65; }
+  .intro-banner strong { color: var(--blue); }
+
+  /* ══ SECTION TITLE ══ */
+  .stitle { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; margin-top: 52px; }
+  .stitle:first-child { margin-top: 0; }
+  .stitle-ico {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--blue), var(--teal));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(47,127,192,0.25);
+  }
+  .stitle-ico.green { background: linear-gradient(135deg, var(--green), var(--teal)); box-shadow: 0 4px 12px rgba(43,170,114,0.25); }
+  .stitle h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); }
+  .stitle-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,127,192,0.2), transparent); }
+
+  /* ══ METRIC CARDS ══ */
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .metrics-grid.two { grid-template-columns: repeat(2, 1fr); }
+  .metrics-grid.four { grid-template-columns: repeat(4, 1fr); }
+
+  .metric-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 18px; padding: 24px; box-shadow: var(--shadow-card);
+    transition: transform 0.2s; position: relative; overflow: hidden;
+  }
+  .metric-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--green2));
+  }
+  .metric-card.green-accent::before { background: linear-gradient(90deg, var(--green), var(--blue2)); }
+
+  .mc-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gray); display: flex; align-items: center; gap: 7px; margin-bottom: 12px;
+  }
+  .mc-label .mico { font-size: 16px; }
+
+  .mc-val { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: 6px; }
+  .mc-val.green { color: var(--green); }
+  .mc-val sup { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 400; color: var(--gray); }
+
+  .mc-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-teal { background: rgba(45,158,168,0.1); color: var(--teal); }
+  .badge-amber { background: rgba(255,165,0,0.12); color: #C77A00; }
+
+  .mc-explain { font-size: 12px; color: var(--mid); line-height: 1.65; padding-top: 12px; border-top: 1px solid rgba(47,127,192,0.08); }
+  .mc-explain strong { color: var(--dark); }
+
+  /* ══ HIGHLIGHT CARD ══ */
+  .highlight-card {
+    background: linear-gradient(135deg, var(--blue), #1A5490);
+    border-radius: 20px; padding: 32px; margin-bottom: 20px;
+    color: white; position: relative; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(47,127,192,0.3);
+  }
+  .highlight-card::after { content: ''; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+  .hc-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 10px; }
+  .hc-val { font-family: 'Playfair Display', serif; font-size: 64px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+  .hc-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
+  .hc-desc { font-size: 13px; opacity: 0.75; line-height: 1.6; max-width: 500px; }
+  .hc-desc strong { opacity: 1; color: #fff; }
+  .highlight-card.green-hl { background: linear-gradient(135deg, var(--green), #1A7550); box-shadow: 0 8px 32px rgba(43,170,114,0.3); }
+
+  /* ══ RETENTION BARS ══ */
+  .ret-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: var(--shadow-card); margin-bottom: 20px; }
+  .ret-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .ret-sub { font-size: 12px; color: var(--mid); margin-bottom: 24px; line-height: 1.55; }
+  .ret-row { margin-bottom: 20px; }
+  .ret-row-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+  .ret-row-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .ret-row-count { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--blue); }
+  .ret-row-pct { font-size: 11px; color: var(--gray); margin-top: 2px; text-align: right; }
+  .ret-bar { height: 10px; background: var(--blue-light); border-radius: 20px; overflow: hidden; }
+  .ret-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--blue2), var(--green2)); }
+  .ret-explain { font-size: 11.5px; color: var(--mid); margin-top: 7px; line-height: 1.5; }
+
+  /* ══ SUMMARY ══ */
+  .summary {
+    background: linear-gradient(135deg, #EBF6FF, #E6FAF3);
+    border: 1px solid rgba(47,127,192,0.15);
+    border-radius: 24px; padding: 44px; margin-top: 60px; margin-bottom: 60px;
+    position: relative; overflow: hidden;
+  }
+  .summary::before { content: '🧠'; position: absolute; right: 24px; bottom: -20px; font-size: 160px; opacity: 0.04; line-height: 1; }
+  .sum-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .sum-sub { font-size: 13px; color: var(--mid); margin-bottom: 32px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+  .kpi-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 20px 14px; text-align: center; box-shadow: var(--shadow-card); }
+  .kpi-card .kico { font-size: 28px; margin-bottom: 8px; }
+  .kpi-card .kl { font-size: 9px; color: var(--gray); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .kpi-card .kval { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+  .kpi-card .kval.green { color: var(--green); }
+  .kpi-card .kbadge { font-size: 10px; color: var(--teal); font-weight: 700; }
+
+  .takeaways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .takeaway { display: flex; gap: 14px; align-items: flex-start; background: white; border-radius: 14px; padding: 18px; border: 1px solid rgba(47,127,192,0.1); box-shadow: var(--shadow-card); }
+  .takeaway .tico { font-size: 22px; flex-shrink: 0; }
+  .takeaway .ttitle { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+  .takeaway .tdesc { font-size: 12px; color: var(--mid); line-height: 1.6; }
+  .takeaway .tdesc strong { color: var(--dark); }
+
+  /* ══ SEPARATOR ══ */
+  .sep { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 48px 0; }
+
+  /* ══ NOTE ══ */
+  .note-banner { background: rgba(47,127,192,0.06); border: 1px solid rgba(47,127,192,0.15); border-radius: 14px; padding: 14px 20px; margin-bottom: 32px; font-size: 12.5px; color: var(--mid); display: flex; align-items: center; gap: 10px; }
+  .note-banner strong { color: var(--blue); }
+
+  /* ══ FOOTER ══ */
+  footer { background: linear-gradient(135deg, var(--dark), #1F5070); padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; }
+  .ft-l { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.8; }
+  .ft-l strong { display: block; color: var(--blue2); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  .ft-c { font-size: 11px; color: rgba(255,255,255,0.35); text-align: center; line-height: 1.8; }
+  .ft-brand { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; font-style: italic; background: linear-gradient(135deg, var(--blue2), var(--green2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .ft-brand small { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; -webkit-text-fill-color: rgba(255,255,255,0.3); font-weight: 400; letter-spacing: 3px; margin-top: 2px; }
+
+  @media (max-width: 768px) {
+    .metrics-grid, .metrics-grid.four { grid-template-columns: 1fr 1fr; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .takeaways { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-circles">
+    <div class="cc cc1"></div>
+    <div class="cc cc2"></div>
+    <div class="cc cc3"></div>
+  </div>
+  <div class="cover-lines"></div>
+  <div class="cover-corner tl"></div>
+  <div class="cover-corner tr"></div>
+  <div class="cover-corner bl"></div>
+  <div class="cover-corner br"></div>
+  <div class="cover-inner">
+    <div class="cover-pill">🧠 Psiviver</div>
+    <div class="status-live"><span class="pulse"></span>CAMPANHA ATIVA — RETOMADA APÓS PAUSA DE MARÇO</div>
+    <span class="cover-icon">🧠</span>
+    <h1>Psiviver</h1>
+    <h2>Relatório de Resultados</h2>
+    <div class="cover-rule"></div>
+    <p class="cover-sub">Campanha de Marketing Digital · Abril 2026</p>
+    <p class="cover-agency">Abril 2026</p>
+    <div class="cover-chips">
+      <div class="chip"><div class="cl">Período</div><div class="cv">01–30 ABR 2026</div></div>
+      <div class="chip"><div class="cl">Status</div><div class="cv" style="color:rgba(72,201,141,1)">● Ativa</div></div>
+      <div class="chip"><div class="cl">Orçamento</div><div class="cv">R$ 900/mês</div></div>
+      <div class="chip"><div class="cl">Investido</div><div class="cv">R$ 339,56</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- Intro explicativo -->
+  <div class="intro-banner">
+    <div class="ib-icon">💡</div>
+    <div>
+      <h3>Como ler este relatório?</h3>
+      <p>Se você nunca viu um relatório de tráfego pago, não se preocupe — cada número aqui tem uma explicação simples. Ao longo do documento, você vai entender <strong>o que cada métrica significa</strong>, por que ela importa, e o que os resultados da Psiviver revelam sobre o desempenho da campanha em Abril.</p>
+    </div>
+  </div>
+
+  <!-- Info da campanha -->
+  <div class="intro-banner" style="background:linear-gradient(135deg, rgba(72,201,141,0.08), rgba(45,158,168,0.06)); border-color:rgba(43,170,114,0.2);">
+    <div class="ib-icon">📋</div>
+    <div>
+      <h3>Nota sobre Abril</h3>
+      <p><strong>Campanha:</strong> PSIVIVER 🔵 DISTRIBUIÇÃO 🔵 CBO TRAFEGO · Objetivo: Tráfego (Cliques no link / Visitas ao perfil)<br>
+      <strong>Status:</strong> Campanha <strong>retomada</strong> após a pausa de fim de Março. Abril foi um mês de <strong>investimento reduzido</strong> (R$ 339,56 — bem abaixo do orçamento de R$ 900), o que naturalmente baixou o volume de alcance e cliques em relação a Março. O foco do mês foi reativar a entrega e estabilizar a conta.</p>
+    </div>
+  </div>
+
+  <!-- ══ ALCANCE & VISIBILIDADE ══ -->
+  <div class="stitle" style="margin-top:0">
+    <div class="stitle-ico">👥</div>
+    <h3>Alcance & Visibilidade</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Estas métricas respondem a uma pergunta fundamental: <strong>quantas pessoas viram o anúncio?</strong></span>
+  </div>
+
+  <div class="highlight-card" style="margin-bottom:16px;">
+    <div class="hc-label">Alcance Total — Pessoas Únicas Impactadas</div>
+    <div class="hc-val">19.935</div>
+    <div class="hc-badge">▼ -55% vs Março (investimento foi -57%)</div>
+    <div class="hc-desc">Mesmo com a campanha investindo <strong>menos da metade</strong> que em Março, o anúncio alcançou <strong>19.935 pessoas diferentes</strong>. A queda no alcance acompanha proporcionalmente a redução do investimento — não é um problema de eficiência, e sim de volume de verba aplicada no mês.</div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">👁️</span>Impressões</div>
+      <div class="mc-val">22.218</div>
+      <div class="mc-badge badge-blue">Total de exibições</div>
+      <div class="mc-explain">O anúncio apareceu no ecrã das pessoas <strong>22.218 vezes</strong> ao longo do mês. A diferença para o alcance reflete pessoas que viram o anúncio mais de uma vez.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🔁</span>Frequência</div>
+      <div class="mc-val">1,11</div>
+      <div class="mc-badge badge-green">● Audiência fresca</div>
+      <div class="mc-explain">Cada pessoa viu o anúncio em média <strong>1,11 vezes</strong> — quase ninguém viu repetido. Isso significa que a verba foi gasta sempre atingindo <strong>gente nova</strong>, sem desgastar o público. Frequência baixa = audiência ainda muito longe da saturação.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">💰</span>CPM — Custo por 1.000 Aparições</div>
+      <div class="mc-val">R$ 15,28</div>
+      <div class="mc-badge badge-amber">▲ vs R$ 9,86 em Março</div>
+      <div class="mc-explain">Por <strong>R$ 15,28</strong> o anúncio apareceu 1.000 vezes. Subiu em relação a Março porque, com verba menor, o algoritmo tem menos margem para otimizar a entrega. Ainda assim está <strong>abaixo da média de mercado</strong> (R$ 20–40).</div>
+    </div>
+  </div>
+
+  <!-- ══ CLIQUES & EFICIÊNCIA ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">🖱️</div>
+    <h3>Cliques & Eficiência</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Aqui medimos quem não só <strong>viu</strong> o anúncio, mas teve interesse suficiente para <strong>clicar e saber mais</strong>.</span>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🖱️</span>Cliques</div>
+      <div class="mc-val">804</div>
+      <div class="mc-badge badge-blue">644 cliques no link</div>
+      <div class="mc-explain"><strong>804 cliques</strong> no total, sendo <strong>644 diretamente no link</strong> do anúncio. Cada clique representa uma pessoa ativamente curiosa que quis conhecer mais sobre a Psiviver.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">💵</span>CPC — Custo por Clique</div>
+      <div class="mc-val">R$ 0,42</div>
+      <div class="mc-badge badge-amber">▲ vs R$ 0,20 em Março</div>
+      <div class="mc-explain">Cada clique custou <strong>R$ 0,42</strong>. Subiu em relação ao recorde de Março (R$ 0,20) por causa do menor investimento, mas continua <strong>muito abaixo</strong> da média do mercado de saúde (R$ 1,50–4,00).</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">📈</span>CTR — Taxa de Cliques</div>
+      <div class="mc-val">3,62<sup>%</sup></div>
+      <div class="mc-badge badge-blue">2,4× a média do setor</div>
+      <div class="mc-explain">De cada 100 pessoas que viram o anúncio, <strong>3,62 clicaram</strong>. A média do setor de saúde é 1,0–1,5%, então o criativo continua performando bem acima do mercado.</div>
+    </div>
+  </div>
+
+  <!-- ══ ENVOLVIMENTO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico green">💬</div>
+    <h3>Envolvimento com a Marca</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Estas métricas revelam <strong>como o público interagiu</strong> com o conteúdo — engajar com a página, reagir, salvar e compartilhar são sinais de identificação com a mensagem.</span>
+  </div>
+
+  <div class="highlight-card green-hl" style="margin-bottom:16px;">
+    <div class="hc-label">Engajamento com a Página — Interações Totais</div>
+    <div class="hc-val">5.835</div>
+    <div class="hc-badge">R$ 0,06 por engajamento</div>
+    <div class="hc-desc">A campanha gerou <strong>5.835 ações de engajamento</strong> com a página/perfil — a um custo de apenas <strong>R$ 0,06 cada</strong>. É o sinal de que, mesmo com verba menor, o conteúdo seguiu conectando com o público.</div>
+  </div>
+
+  <div class="metrics-grid four">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">❤️</span>Reações</div>
+      <div class="mc-val" style="font-size:34px;">175</div>
+      <div class="mc-explain">Curtidas e reações nos anúncios.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🔖</span>Salvamentos</div>
+      <div class="mc-val" style="font-size:34px;">9</div>
+      <div class="mc-explain">Pessoas que salvaram o conteúdo para rever depois.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🔄</span>Compartilhamentos</div>
+      <div class="mc-val" style="font-size:34px;">17</div>
+      <div class="mc-explain">Conteúdo enviado a amigos — alcance orgânico extra.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">💬</span>Comentários</div>
+      <div class="mc-val" style="font-size:34px;">3</div>
+      <div class="mc-explain">Conversas iniciadas nas publicações.</div>
+    </div>
+  </div>
+
+  <!-- ══ DESEMPENHO DO VÍDEO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">🎬</div>
+    <h3>Desempenho do Vídeo</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>A retenção mostra <strong>até onde as pessoas assistem</strong> o vídeo. Quanto mais gente chega ao fim, mais forte é o criativo.</span>
+  </div>
+
+  <div class="ret-card">
+    <div class="ret-title">▶️ Retenção do Vídeo em Abril</div>
+    <div class="ret-sub">Partindo de <strong>4.957 reproduções</strong> (plays de 3 segundos), veja quantas pessoas avançaram em cada etapa do vídeo.</div>
+
+    <div class="ret-row">
+      <div class="ret-row-header"><div class="ret-row-label">▶️ Reproduções (3s)</div><div class="ret-row-count">4.957</div></div>
+      <div class="ret-bar"><div class="ret-fill" style="width:100%;"></div></div>
+    </div>
+    <div class="ret-row">
+      <div class="ret-row-header"><div class="ret-row-label">📊 Assistiram 25%</div><div class="ret-row-count">1.219</div></div>
+      <div class="ret-bar"><div class="ret-fill" style="width:24.6%;"></div></div>
+      <div class="ret-row-pct">25% das reproduções</div>
+    </div>
+    <div class="ret-row">
+      <div class="ret-row-header"><div class="ret-row-label">📊 Assistiram 50%</div><div class="ret-row-count">663</div></div>
+      <div class="ret-bar"><div class="ret-fill" style="width:13.4%;"></div></div>
+      <div class="ret-row-pct">13% das reproduções</div>
+    </div>
+    <div class="ret-row">
+      <div class="ret-row-header"><div class="ret-row-label">📊 Assistiram 75%</div><div class="ret-row-count">363</div></div>
+      <div class="ret-bar"><div class="ret-fill" style="width:7.3%;"></div></div>
+      <div class="ret-row-pct">7% das reproduções</div>
+    </div>
+    <div class="ret-row" style="margin-bottom:0;">
+      <div class="ret-row-header"><div class="ret-row-label">🏁 Assistiram 100%</div><div class="ret-row-count">214</div></div>
+      <div class="ret-bar"><div class="ret-fill" style="width:4.3%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+      <div class="ret-row-pct">4,3% chegaram ao fim</div>
+    </div>
+    <div class="ret-explain">📌 A maior parte do público assiste os primeiros segundos — comportamento normal em vídeos de feed. Os <strong>214 que assistiram até o fim</strong> são o público mais qualificado e engajado.</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ══ PÚBLICO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico green">🎯</div>
+    <h3>Público — Quem Está Sendo Impactado</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="ret-card" style="margin-bottom:20px;">
+    <div class="ret-sub" style="margin-bottom:24px;">Conhecer o perfil de quem vê os anúncios permite criar conteúdo cada vez mais direcionado — e garante que a mensagem da Psiviver chega para as pessoas certas. Dados de Abril extraídos diretamente do Gerenciador de Anúncios.</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
+
+      <!-- Gênero -->
+      <div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Gênero</div>
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:6px;"><span>👩 Mulheres</span><span style="font-weight:700; color:var(--green);">70%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:70%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:6px;"><span>👨 Homens</span><span style="font-weight:700; color:var(--blue);">30%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:30%;"></div></div>
+        </div>
+        <div style="font-size:11px; color:var(--mid); margin-top:10px; line-height:1.5;">Público majoritariamente feminino — alinhado com o tom dos conteúdos da Psiviver.</div>
+      </div>
+
+      <!-- Faixa etária -->
+      <div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Faixa Etária (por exibições)</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🥇 35–44 anos</span><span style="font-weight:700; color:var(--blue);">27%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:100%;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🥈 45–54 anos</span><span style="font-weight:700; color:var(--blue);">23%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:85%;"></div></div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🥉 65+ anos</span><span style="font-weight:700; color:var(--blue);">23%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:84%;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>4ª 55–64 anos</span><span style="font-weight:700; color:var(--blue);">22%</span></div>
+          <div class="ret-bar"><div class="ret-fill" style="width:82%;"></div></div>
+        </div>
+        <div style="font-size:11px; color:var(--mid); margin-top:10px; line-height:1.5;">Público adulto e maduro (35–65+). Os cliques se concentraram nas faixas <strong>55–64 e 65+</strong>, que mais responderam aos anúncios.</div>
+      </div>
+
+      <!-- Regiões -->
+      <div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Top Estados</div>
+        <div style="margin-bottom:8px;"><div style="font-size:12px; color:var(--mid); margin-bottom:4px;">🥇 São Paulo</div><div class="ret-bar"><div class="ret-fill" style="width:100%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
+        <div style="margin-bottom:8px;"><div style="font-size:12px; color:var(--mid); margin-bottom:4px;">🥈 Minas Gerais</div><div class="ret-bar"><div class="ret-fill" style="width:51%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
+        <div style="margin-bottom:8px;"><div style="font-size:12px; color:var(--mid); margin-bottom:4px;">🥉 Bahia</div><div class="ret-bar"><div class="ret-fill" style="width:40%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
+        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">4. Rio de Janeiro</div><div class="ret-bar"><div class="ret-fill" style="width:40%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
+        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">5. Pernambuco</div><div class="ret-bar"><div class="ret-fill" style="width:35%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
+        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">6. Ceará</div><div class="ret-bar"><div class="ret-fill" style="width:33%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
+        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">7. Rio Grande do Sul</div><div class="ret-bar"><div class="ret-fill" style="width:33%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
+        <div style="font-size:11px; color:var(--mid); margin-top:10px; line-height:1.5;">Distribuição nacional, com <strong>São Paulo na liderança</strong> e forte presença no Nordeste (BA, PE, CE).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ══ FINANCEIRO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">💳</div>
+    <h3>Financeiro — Investimento do Mês</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="note-banner">
+    <span>📌</span>
+    <span>Conta: <strong>PSIVIVER CA01</strong> · Orçamento mensal previsto: <strong>R$ 900,00</strong></span>
+  </div>
+
+  <div class="metrics-grid two">
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">💰</span>Total Investido em Abril</div>
+      <div class="mc-val green">R$ 339,56</div>
+      <div class="mc-badge badge-amber">38% do orçamento de R$ 900</div>
+      <div class="mc-explain">A campanha gastou <strong>R$ 339,56</strong> em Abril — bem abaixo do orçamento mensal de R$ 900. Há <strong>margem de R$ 560</strong> não aplicada, que poderia ter ampliado o alcance e os cliques.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">📊</span>Custo por Resultado</div>
+      <div class="mc-val">R$ 0,42</div>
+      <div class="mc-badge badge-blue">por clique · R$ 0,06 por engajamento</div>
+      <div class="mc-explain">Mesmo com verba reduzida, o custo por clique (R$ 0,42) e por engajamento (R$ 0,06) seguiram <strong>competitivos</strong>. O potencial de escala está claro: aplicar o orçamento cheio renderia muito mais volume.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ══ RESUMO EXECUTIVO ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">📝</div>
+    <h3>Resumo Executivo</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="summary">
+    <div class="sum-title">🧠 &nbsp; Análise Geral — Psiviver · Abril 2026</div>
+    <div class="sum-sub">Mês de retomada após a pausa de Março. Com R$ 339,56 investidos (38% do orçamento), a campanha reativou a entrega mantendo CPC e CTR competitivos, atingindo um público novo (frequência de apenas 1,11).</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kico">👥</div><div class="kl">Alcance</div><div class="kval">19.935</div><div class="kbadge">pessoas impactadas</div></div>
+      <div class="kpi-card"><div class="kico">🖱️</div><div class="kl">Cliques</div><div class="kval">804</div><div class="kbadge">R$ 0,42 por clique</div></div>
+      <div class="kpi-card"><div class="kico">📈</div><div class="kl">CTR</div><div class="kval green">3,62%</div><div class="kbadge">2,4× a média</div></div>
+      <div class="kpi-card"><div class="kico">💬</div><div class="kl">Engajamento</div><div class="kval">5.835</div><div class="kbadge">R$ 0,06 cada</div></div>
+    </div>
+
+    <div class="takeaways">
+      <div class="takeaway">
+        <div class="tico">🔄</div>
+        <div>
+          <div class="ttitle">Campanha Reativada</div>
+          <div class="tdesc">Após a pausa por falta de fundos no fim de Março, a campanha <strong>voltou a rodar</strong> em Abril e estabilizou a entrega — base para escalar nos meses seguintes.</div>
+        </div>
+      </div>
+      <div class="takeaway">
+        <div class="tico">🌱</div>
+        <div>
+          <div class="ttitle">Audiência Fresca</div>
+          <div class="tdesc">Frequência de <strong>1,11</strong> — quase todo mundo viu o anúncio só uma vez. Não há fadiga de público; há muito espaço para crescer com mais verba.</div>
+        </div>
+      </div>
+      <div class="takeaway">
+        <div class="tico">💡</div>
+        <div>
+          <div class="ttitle">Orçamento Subutilizado</div>
+          <div class="tdesc">Só <strong>38% do orçamento</strong> foi gasto. Aplicar os R$ 900 completos é o caminho direto para multiplicar alcance e cliques mantendo o custo baixo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RECOMENDAÇÕES ══ -->
+  <div class="stitle">
+    <div class="stitle-ico green">🚀</div>
+    <h3>Recomendações para Maio</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:40px;">
+    <div style="background:linear-gradient(135deg, rgba(43,170,114,0.05), rgba(45,158,168,0.05)); border:1px solid rgba(43,170,114,0.18); border-radius:16px; padding:22px; display:flex; gap:16px; align-items:flex-start;">
+      <div style="font-size:28px; flex-shrink:0;">💰</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--dark); margin-bottom:6px;">Aplicar o orçamento completo de R$ 900</div>
+        <div style="font-size:13px; color:var(--mid); line-height:1.6;">Em Abril só 38% da verba foi usada. Com a frequência tão baixa (1,11) e CPC competitivo, <strong>investir os R$ 900 completos</strong> tende a multiplicar alcance e cliques sem desgastar o público.</div>
+      </div>
+    </div>
+    <div class="takeaway"><div class="tico">👩</div><div><div class="ttitle">Falar com mulheres 35–65+</div><div class="tdesc">O público é <strong>feminino e maduro</strong> (35 a 65+). Criar conteúdo que dialogue com essa faixa aumenta identificação e cliques.</div></div></div>
+    <div class="takeaway"><div class="tico">📍</div><div><div class="ttitle">Reforçar SP + Nordeste</div><div class="tdesc">São Paulo lidera, e Bahia, Pernambuco e Ceará aparecem forte. Vale conteúdo/segmentação atenta a essas regiões.</div></div></div>
+    <div class="takeaway"><div class="tico">🎬</div><div><div class="ttitle">Otimizar os primeiros 3s do vídeo</div><div class="tdesc">A maior queda de retenção é logo no início. <strong>Gancho mais forte nos 3 primeiros segundos</strong> leva mais gente ao 50% e 100%.</div></div></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-l">
+    <strong>Relatório de Métricas</strong>
+    Abril 2026 · Gestor: Balla (O Criativo Marketing)
+  </div>
+  <div class="ft-c">
+    Psiviver · Campanha de Abril<br>
+    <small style="color:rgba(255,255,255,0.2)">Documento confidencial · Uso interno</small>
+  </div>
+  <div>
+    <div class="ft-brand">Psiviver<small>Relatório de Campanha</small></div>
+  </div>
+</footer>
+
+</body>
+</html>
