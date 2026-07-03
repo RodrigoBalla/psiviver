@@ -23,7 +23,6 @@
     --green-light: #D3F2E6;
     --green-pale: #E8F9F3;
     --teal: #2D9EA8;
-    --red: #D64550;
     --dark: #1A3550;
     --mid: #3D6484;
     --gray: #8AADC4;
@@ -43,13 +42,11 @@
     position: relative; overflow: hidden;
     background: linear-gradient(160deg, #1A3550 0%, #1F5070 45%, #1A6B5A 100%);
   }
-
   .cover-circles { position: absolute; inset: 0; pointer-events: none; }
   .cc { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%); }
   .cc1 { width: 700px; height: 700px; top: -200px; right: -180px; }
   .cc2 { width: 500px; height: 500px; bottom: -150px; left: -120px; }
   .cc3 { width: 300px; height: 300px; top: 40%; left: 30%; background: radial-gradient(circle, rgba(72,201,141,0.06) 0%, transparent 70%); }
-
   .cover-lines {
     position: absolute; inset: 0; pointer-events: none;
     background-image:
@@ -57,46 +54,36 @@
       linear-gradient(90deg, rgba(77,163,224,0.06) 1px, transparent 1px);
     background-size: 52px 52px;
   }
-
   .cover-corner { position: absolute; width: 48px; height: 48px; border-color: rgba(255,255,255,0.15); border-style: solid; }
   .tl { top: 32px; left: 32px; border-width: 2px 0 0 2px; }
   .tr { top: 32px; right: 32px; border-width: 2px 2px 0 0; }
   .bl { bottom: 32px; left: 32px; border-width: 0 0 2px 2px; }
   .br { bottom: 32px; right: 32px; border-width: 0 2px 2px 0; }
-
   .cover-inner { position: relative; z-index: 2; padding: 60px 40px; max-width: 740px; }
-
   .cover-pill {
     display: inline-flex; align-items: center; gap: 8px;
     background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.22);
     color: rgba(255,255,255,0.9); font-weight: 700; font-size: 10px; letter-spacing: 4px;
     text-transform: uppercase; padding: 7px 22px; border-radius: 30px; margin-bottom: 36px;
   }
-
   .cover-icon { font-size: 56px; display: block; margin-bottom: 16px; filter: drop-shadow(0 0 24px rgba(72,201,141,0.5)); }
-
   .cover h1 {
     font-family: 'Playfair Display', serif;
     font-size: 88px; font-weight: 800; letter-spacing: -2px; line-height: 0.9;
     color: #ffffff; margin-bottom: 10px;
     text-shadow: 0 4px 30px rgba(77,163,224,0.35);
   }
-
   .cover h2 {
     font-family: 'Playfair Display', serif;
     font-size: 20px; font-weight: 400; font-style: italic;
     color: rgba(255,255,255,0.5); letter-spacing: 3px; margin-bottom: 6px;
   }
-
   .cover-rule { width: 90px; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(77,163,224,0.8), rgba(72,201,141,0.8), transparent); margin: 24px auto; }
-
   .cover-sub { font-size: 12px; color: rgba(255,255,255,0.38); letter-spacing: 2px; margin-bottom: 4px; }
   .cover-agency { font-size: 10px; font-weight: 700; color: rgba(72,201,141,0.9); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 48px; }
-
   .cover-chips { display: flex; gap: 36px; justify-content: center; flex-wrap: wrap; }
   .chip .cl { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
   .chip .cv { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); }
-
   .status-live {
     display: inline-flex; align-items: center; gap: 6px;
     background: rgba(72,201,141,0.12); border: 1px solid rgba(72,201,141,0.3);
@@ -138,79 +125,62 @@
   /* ══ METRIC CARDS ══ */
   .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
   .metrics-grid.two { grid-template-columns: repeat(2, 1fr); }
-  .metrics-grid.four { grid-template-columns: repeat(4, 1fr); }
-
   .metric-card {
     background: var(--white); border: 1px solid var(--border);
     border-radius: 18px; padding: 24px; box-shadow: var(--shadow-card);
-    transition: transform 0.2s; position: relative; overflow: hidden;
+    position: relative; overflow: hidden;
   }
   .metric-card::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, var(--blue), var(--green2));
   }
   .metric-card.green-accent::before { background: linear-gradient(90deg, var(--green), var(--blue2)); }
-
   .mc-label {
     font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
     color: var(--gray); display: flex; align-items: center; gap: 7px; margin-bottom: 12px;
   }
   .mc-label .mico { font-size: 16px; }
-
   .mc-val { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: 6px; }
   .mc-val.green { color: var(--green); }
   .mc-val sup { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 400; color: var(--gray); }
-
   .mc-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
   .badge-blue { background: var(--blue-light); color: var(--blue); }
   .badge-green { background: var(--green-light); color: var(--green); }
   .badge-teal { background: rgba(45,158,168,0.1); color: var(--teal); }
-  .badge-amber { background: rgba(255,165,0,0.12); color: #C77A00; }
-
   .mc-explain { font-size: 12px; color: var(--mid); line-height: 1.65; padding-top: 12px; border-top: 1px solid rgba(47,127,192,0.08); }
   .mc-explain strong { color: var(--dark); }
 
   /* ══ HIGHLIGHT CARD ══ */
   .highlight-card {
-    background: linear-gradient(135deg, var(--blue), #1A5490);
-    border-radius: 20px; padding: 32px; margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--green), #1A7550);
+    border-radius: 20px; padding: 36px; margin-bottom: 20px;
     color: white; position: relative; overflow: hidden;
-    box-shadow: 0 8px 32px rgba(47,127,192,0.3);
+    box-shadow: 0 8px 32px rgba(43,170,114,0.3);
   }
   .highlight-card::after { content: ''; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.05); }
   .hc-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 10px; }
-  .hc-val { font-family: 'Playfair Display', serif; font-size: 64px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+  .hc-val { font-family: 'Playfair Display', serif; font-size: 72px; font-weight: 800; line-height: 1; margin-bottom: 8px; }
   .hc-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
-  .hc-desc { font-size: 13px; opacity: 0.75; line-height: 1.6; max-width: 500px; }
+  .hc-desc { font-size: 13.5px; opacity: 0.8; line-height: 1.6; max-width: 520px; }
   .hc-desc strong { opacity: 1; color: #fff; }
-  .highlight-card.green-hl { background: linear-gradient(135deg, var(--green), #1A7550); box-shadow: 0 8px 32px rgba(43,170,114,0.3); }
 
   /* ══ FUNNEL ══ */
   .funnel { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; margin-bottom: 20px; }
-  .funnel-step { flex: 1; min-width: 140px; background: var(--white); border: 1px solid var(--border); border-radius: 18px; padding: 22px 18px; text-align: center; box-shadow: var(--shadow-card); position: relative; }
-  .funnel-step .fico { font-size: 24px; margin-bottom: 8px; }
+  .funnel-step { flex: 1; min-width: 150px; background: var(--white); border: 1px solid var(--border); border-radius: 18px; padding: 24px 18px; text-align: center; box-shadow: var(--shadow-card); }
+  .funnel-step .fico { font-size: 26px; margin-bottom: 8px; }
   .funnel-step .fl { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gray); margin-bottom: 8px; }
-  .funnel-step .fv { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--blue); line-height: 1; }
+  .funnel-step .fv { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: var(--blue); line-height: 1; }
   .funnel-step .fv.green { color: var(--green); }
-  .funnel-step .fv.amber { color: #C77A00; }
-  .funnel-step .fsub { font-size: 11px; color: var(--mid); margin-top: 6px; line-height: 1.4; }
-  .funnel-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; min-width: 68px; }
-  .funnel-arrow .fa-ico { font-size: 20px; color: var(--gray); }
-  .funnel-arrow .fa-pct { font-size: 10px; font-weight: 700; color: var(--teal); margin-top: 2px; text-align: center; line-height: 1.2; }
-  @media (max-width: 768px) { .funnel-arrow { min-width: 100%; transform: rotate(90deg); padding: 4px 0; } }
+  .funnel-step .fsub { font-size: 11.5px; color: var(--mid); margin-top: 6px; line-height: 1.4; }
+  .funnel-arrow { display: flex; align-items: center; justify-content: center; padding: 0 8px; min-width: 44px; font-size: 22px; color: var(--gray); }
+  @media (max-width: 768px) { .funnel-arrow { min-width: 100%; transform: rotate(90deg); padding: 6px 0; } }
 
   /* ══ RETENTION BARS ══ */
   .ret-card { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: var(--shadow-card); margin-bottom: 20px; }
   .ret-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
   .ret-sub { font-size: 12px; color: var(--mid); margin-bottom: 24px; line-height: 1.55; }
-  .ret-row { margin-bottom: 20px; }
-  .ret-row-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
-  .ret-row-label { font-size: 13px; font-weight: 600; color: var(--dark); }
-  .ret-row-count { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--blue); }
-  .ret-row-pct { font-size: 11px; color: var(--gray); margin-top: 2px; text-align: right; }
   .ret-bar { height: 10px; background: var(--blue-light); border-radius: 20px; overflow: hidden; }
   .ret-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--blue2), var(--green2)); }
-  .ret-explain { font-size: 11.5px; color: var(--mid); margin-top: 7px; line-height: 1.5; }
 
   /* ══ SUMMARY ══ */
   .summary {
@@ -222,7 +192,6 @@
   .summary::before { content: '🧠'; position: absolute; right: 24px; bottom: -20px; font-size: 160px; opacity: 0.04; line-height: 1; }
   .sum-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
   .sum-sub { font-size: 13px; color: var(--mid); margin-bottom: 32px; }
-
   .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
   .kpi-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 20px 14px; text-align: center; box-shadow: var(--shadow-card); }
   .kpi-card .kico { font-size: 28px; margin-bottom: 8px; }
@@ -230,7 +199,6 @@
   .kpi-card .kval { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
   .kpi-card .kval.green { color: var(--green); }
   .kpi-card .kbadge { font-size: 10px; color: var(--teal); font-weight: 700; }
-
   .takeaways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   .takeaway { display: flex; gap: 14px; align-items: flex-start; background: white; border-radius: 14px; padding: 18px; border: 1px solid rgba(47,127,192,0.1); box-shadow: var(--shadow-card); }
   .takeaway .tico { font-size: 22px; flex-shrink: 0; }
@@ -238,10 +206,8 @@
   .takeaway .tdesc { font-size: 12px; color: var(--mid); line-height: 1.6; }
   .takeaway .tdesc strong { color: var(--dark); }
 
-  /* ══ SEPARATOR ══ */
+  /* ══ SEPARATOR / NOTE ══ */
   .sep { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 48px 0; }
-
-  /* ══ NOTE ══ */
   .note-banner { background: rgba(47,127,192,0.06); border: 1px solid rgba(47,127,192,0.15); border-radius: 14px; padding: 14px 20px; margin-bottom: 32px; font-size: 12.5px; color: var(--mid); display: flex; align-items: center; gap: 10px; }
   .note-banner strong { color: var(--blue); }
 
@@ -254,7 +220,7 @@
   .ft-brand small { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; -webkit-text-fill-color: rgba(255,255,255,0.3); font-weight: 400; letter-spacing: 3px; margin-top: 2px; }
 
   @media (max-width: 768px) {
-    .metrics-grid, .metrics-grid.four { grid-template-columns: 1fr 1fr; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
     .kpi-grid { grid-template-columns: 1fr 1fr; }
     .takeaways { grid-template-columns: 1fr; }
     .cover h1 { font-size: 56px; }
@@ -265,27 +231,20 @@
 
 <!-- COVER -->
 <div class="cover">
-  <div class="cover-circles">
-    <div class="cc cc1"></div>
-    <div class="cc cc2"></div>
-    <div class="cc cc3"></div>
-  </div>
+  <div class="cover-circles"><div class="cc cc1"></div><div class="cc cc2"></div><div class="cc cc3"></div></div>
   <div class="cover-lines"></div>
-  <div class="cover-corner tl"></div>
-  <div class="cover-corner tr"></div>
-  <div class="cover-corner bl"></div>
-  <div class="cover-corner br"></div>
+  <div class="cover-corner tl"></div><div class="cover-corner tr"></div><div class="cover-corner bl"></div><div class="cover-corner br"></div>
   <div class="cover-inner">
     <div class="cover-pill">🧠 Psiviver</div>
-    <div class="status-live"><span class="pulse"></span>NOVA CAMPANHA — TRÁFEGO PARA O SITE (GERAÇÃO DE LEADS)</div>
+    <div class="status-live"><span class="pulse"></span>CAMPANHA DE VISITAS AO SITE</div>
     <span class="cover-icon">🧠</span>
     <h1>Psiviver</h1>
     <h2>Relatório de Resultados</h2>
     <div class="cover-rule"></div>
-    <p class="cover-sub">Campanha de Tráfego para o Site · Junho 2026</p>
+    <p class="cover-sub">Campanha de Visitas ao Site · Junho 2026</p>
     <p class="cover-agency">Junho 2026</p>
     <div class="cover-chips">
-      <div class="chip"><div class="cl">Período ativo</div><div class="cv">15–30 JUN 2026</div></div>
+      <div class="chip"><div class="cl">Período</div><div class="cv">15–30 JUN 2026</div></div>
       <div class="chip"><div class="cl">Status</div><div class="cv" style="color:rgba(72,201,141,1)">● Ativa</div></div>
       <div class="chip"><div class="cl">Investido</div><div class="cv">R$ 710,59</div></div>
       <div class="chip"><div class="cl">Visitas ao site</div><div class="cv">1.752</div></div>
@@ -296,291 +255,137 @@
 <!-- PAGE -->
 <div class="page">
 
-  <!-- Intro explicativo -->
+  <!-- Intro -->
   <div class="intro-banner">
-    <div class="ib-icon">💡</div>
+    <div class="ib-icon">🎯</div>
     <div>
-      <h3>Como ler este relatório?</h3>
-      <p>Junho marcou o início de uma <strong>campanha nova e diferente</strong>. Até Maio, os anúncios levavam as pessoas ao perfil do Instagram. Agora o objetivo mudou: <strong>levar as pessoas para o site da Psiviver</strong> — o primeiro passo para transformar visitantes em leads (potenciais clientes). Este relatório mostra quão bem os anúncios cumpriram esse papel e onde está o próximo ponto de atenção.</p>
+      <h3>O objetivo desta campanha</h3>
+      <p>Esta campanha tem <strong>um objetivo simples</strong>: levar pessoas para o site da Psiviver. Cada número abaixo mostra, de forma direta, quanta gente o anúncio alcançou, quantos clicaram e quantos chegaram ao site — e o quão barato isso saiu.</p>
     </div>
   </div>
 
-  <!-- Info da campanha -->
-  <div class="intro-banner" style="background:linear-gradient(135deg, rgba(214,69,80,0.06), rgba(255,120,0,0.05)); border-color:rgba(214,69,80,0.18);">
-    <div class="ib-icon">🔴</div>
-    <div>
-      <h3>Nota sobre Junho — nova campanha de site</h3>
-      <p><strong>Campanha:</strong> PSIVIVER 🔴 TRÁFEGO SITE 🔴 CBO TRAFEGO · Objetivo: Tráfego para o site (gerar leads)<br>
-      <strong>Período:</strong> A campanha começou em <strong>15 de junho</strong> e rodou 16 dias. A campanha antiga (visitas ao perfil) foi <strong>pausada</strong>. Em pouco mais de duas semanas, esta nova campanha entregou o <strong>tráfego mais barato e eficiente de todos os meses</strong> — o desafio agora é converter esse tráfego em leads no site.</p>
-    </div>
-  </div>
-
-  <!-- ══ FUNIL ══ -->
+  <!-- Resultado principal -->
   <div class="stitle" style="margin-top:0">
+    <div class="stitle-ico green">🌐</div>
+    <h3>Resultado Principal</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="highlight-card">
+    <div class="hc-label">Visitas ao Site</div>
+    <div class="hc-val">1.752</div>
+    <div class="hc-badge">R$ 0,41 por visita</div>
+    <div class="hc-desc"><strong>1.752 pessoas entraram no site da Psiviver</strong> depois de ver o anúncio — a um custo de apenas R$ 0,41 cada. Este é o principal resultado da campanha: <strong>tráfego real e barato para o site</strong>.</div>
+  </div>
+
+  <!-- ══ NÚMEROS DA CAMPANHA ══ -->
+  <div class="stitle">
+    <div class="stitle-ico">📊</div>
+    <h3>Os Números da Campanha</h3>
+    <div class="stitle-line"></div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">👥</span>Alcance</div>
+      <div class="mc-val">51.112</div>
+      <div class="mc-explain"><strong>51.112 pessoas diferentes</strong> viram o anúncio em 16 dias de campanha.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">👁️</span>Impressões</div>
+      <div class="mc-val">75.888</div>
+      <div class="mc-explain">O anúncio apareceu <strong>75.888 vezes</strong> nas telas das pessoas.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">🖱️</span>Cliques no Link</div>
+      <div class="mc-val">2.938</div>
+      <div class="mc-explain"><strong>2.938 pessoas clicaram</strong> no anúncio para ir ao site.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">💵</span>Custo por Clique</div>
+      <div class="mc-val green">R$ 0,15</div>
+      <div class="mc-explain">Cada clique custou só <strong>R$ 0,15</strong> — o valor mais baixo da campanha.</div>
+    </div>
+    <div class="metric-card green-accent">
+      <div class="mc-label"><span class="mico">📈</span>Taxa de Cliques (CTR)</div>
+      <div class="mc-val green">6,25<sup>%</sup></div>
+      <div class="mc-explain">De cada 100 pessoas que viram, <strong>6 clicaram</strong> — ótimo resultado.</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label"><span class="mico">💰</span>Custo por Mil Exibições</div>
+      <div class="mc-val">R$ 9,36</div>
+      <div class="mc-explain">Aparecer 1.000 vezes custou <strong>R$ 9,36</strong> — bem abaixo do mercado.</div>
+    </div>
+  </div>
+
+  <!-- ══ CAMINHO ATÉ O SITE ══ -->
+  <div class="stitle">
     <div class="stitle-ico">🧭</div>
-    <h3>O Funil — Do Anúncio ao Site</h3>
+    <h3>O Caminho até o Site</h3>
     <div class="stitle-line"></div>
   </div>
 
   <div class="note-banner">
     <span>📌</span>
-    <span>O funil mostra o caminho da pessoa: <strong>viu o anúncio → clicou → chegou ao site</strong>. Cada etapa filtra quem tem mais interesse.</span>
+    <span>Veja o caminho da pessoa, passo a passo: <strong>viu o anúncio → clicou → chegou ao site</strong>.</span>
   </div>
 
   <div class="funnel">
     <div class="funnel-step">
       <div class="fico">👁️</div>
-      <div class="fl">Impressões</div>
+      <div class="fl">Viram o anúncio</div>
       <div class="fv">75.888</div>
-      <div class="fsub">exibições do anúncio</div>
+      <div class="fsub">exibições</div>
     </div>
-    <div class="funnel-arrow">
-      <div class="fa-ico">→</div>
-      <div class="fa-pct">3,9%<br>clicaram</div>
-    </div>
+    <div class="funnel-arrow">→</div>
     <div class="funnel-step">
       <div class="fico">🖱️</div>
-      <div class="fl">Cliques no link</div>
+      <div class="fl">Clicaram</div>
       <div class="fv">2.938</div>
-      <div class="fsub">quiseram ir ao site</div>
+      <div class="fsub">cliques no link</div>
     </div>
-    <div class="funnel-arrow">
-      <div class="fa-ico">→</div>
-      <div class="fa-pct">60%<br>carregaram</div>
-    </div>
+    <div class="funnel-arrow">→</div>
     <div class="funnel-step">
       <div class="fico">🌐</div>
-      <div class="fl">Visitas ao site</div>
+      <div class="fl">Chegaram ao site</div>
       <div class="fv green">1.752</div>
-      <div class="fsub">landing page carregada</div>
-    </div>
-    <div class="funnel-arrow">
-      <div class="fa-ico">→</div>
-      <div class="fa-pct">a medir</div>
-    </div>
-    <div class="funnel-step">
-      <div class="fico">📝</div>
-      <div class="fl">Leads no formulário</div>
-      <div class="fv amber">—</div>
-      <div class="fsub">próximo passo</div>
+      <div class="fsub">visitas ao site</div>
     </div>
   </div>
 
-  <div class="note-banner" style="background:rgba(255,165,0,0.07); border-color:rgba(255,165,0,0.22);">
-    <span>⚠️</span>
-    <span>A campanha entregou <strong>1.752 visitas reais ao site</strong> a R$ 0,41 cada — excelente. Porém, no período, o <strong>formulário de leads conectado a este painel não registrou novos cadastros</strong>. Vale confirmar se os anúncios apontam para a página de captura certa e se o formulário está convertendo (ver seção "Do Clique ao Lead").</span>
-  </div>
-
-  <!-- ══ ALCANCE & VISIBILIDADE ══ -->
-  <div class="stitle">
-    <div class="stitle-ico">👥</div>
-    <h3>Alcance & Visibilidade</h3>
-    <div class="stitle-line"></div>
-  </div>
-
-  <div class="highlight-card" style="margin-bottom:16px;">
-    <div class="hc-label">Alcance Total — Pessoas Únicas Impactadas</div>
-    <div class="hc-val">51.112</div>
-    <div class="hc-badge">🎯 Em apenas 16 dias de campanha</div>
-    <div class="hc-desc">A nova campanha alcançou <strong>51.112 pessoas diferentes</strong> em pouco mais de duas semanas — o maior alcance desde Março, e num período menor. O anúncio de site "pega" muito bem no público.</div>
-  </div>
-
-  <div class="metrics-grid">
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">👁️</span>Impressões</div>
-      <div class="mc-val">75.888</div>
-      <div class="mc-badge badge-blue">Volume alto de exibições</div>
-      <div class="mc-explain">O anúncio apareceu <strong>75.888 vezes</strong> em 16 dias — ritmo de exibição bem acima dos meses anteriores.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">🔁</span>Frequência</div>
-      <div class="mc-val">1,48</div>
-      <div class="mc-badge badge-teal">● Zona ideal</div>
-      <div class="mc-explain">Cada pessoa viu o anúncio em média <strong>1,48 vezes</strong> — dentro da faixa saudável (1,5 a 3), sem cansar o público.</div>
-    </div>
-    <div class="metric-card green-accent">
-      <div class="mc-label"><span class="mico">💰</span>CPM — Custo por 1.000 Aparições</div>
-      <div class="mc-val green">R$ 9,36</div>
-      <div class="mc-badge badge-green">🏆 Melhor CPM desde Março</div>
-      <div class="mc-explain">Por apenas <strong>R$ 9,36</strong> o anúncio apareceu 1.000 vezes — abaixo de Abril (R$ 15,28) e Maio (R$ 19,57), e muito abaixo da média de mercado (R$ 20–40).</div>
-    </div>
-  </div>
-
-  <!-- ══ CLIQUES & EFICIÊNCIA ══ -->
-  <div class="stitle">
-    <div class="stitle-ico">🖱️</div>
-    <h3>Cliques & Eficiência</h3>
-    <div class="stitle-line"></div>
-  </div>
-
-  <div class="note-banner">
-    <span>📌</span>
-    <span>Aqui está o grande destaque de Junho: os cliques foram os <strong>mais baratos e a taxa de cliques a mais alta</strong> de toda a campanha.</span>
-  </div>
-
-  <div class="metrics-grid">
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">🖱️</span>Cliques</div>
-      <div class="mc-val">4.741</div>
-      <div class="mc-badge badge-blue">2.938 cliques no link</div>
-      <div class="mc-explain"><strong>4.741 cliques</strong> no total, sendo <strong>2.938 diretamente no link</strong> para o site. Mais interesse gerado do que em qualquer mês desde Março.</div>
-    </div>
-    <div class="metric-card green-accent">
-      <div class="mc-label"><span class="mico">💵</span>CPC — Custo por Clique</div>
-      <div class="mc-val green">R$ 0,15</div>
-      <div class="mc-badge badge-green">🏆 CPC mais baixo de todos os meses</div>
-      <div class="mc-explain">Cada clique custou apenas <strong>R$ 0,15</strong> — mais barato que Março (R$ 0,20), Abril (R$ 0,42) e Maio (R$ 0,38). Até <strong>25× mais barato</strong> que a média do mercado de saúde.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">📈</span>CTR — Taxa de Cliques</div>
-      <div class="mc-val">6,25<sup>%</sup></div>
-      <div class="mc-badge badge-green">🏆 Melhor CTR de todos os meses</div>
-      <div class="mc-explain">De cada 100 pessoas que viram o anúncio, <strong>6,25 clicaram</strong> — recorde da campanha (Maio 5,14% · Março 4,97%). Cerca de <strong>5× acima</strong> da média do setor de saúde.</div>
-    </div>
-  </div>
-
-  <!-- ══ DO CLIQUE AO LEAD ══ -->
-  <div class="stitle">
-    <div class="stitle-ico green">🌐</div>
-    <h3>Do Clique ao Lead</h3>
-    <div class="stitle-line"></div>
-  </div>
-
-  <div class="note-banner">
-    <span>📌</span>
-    <span>Como esta é uma campanha de <strong>geração de leads no site</strong>, o que importa não é só o clique — é quantas pessoas <strong>chegaram ao site</strong> e, depois, <strong>deixaram seus dados</strong>.</span>
-  </div>
-
-  <div class="metrics-grid two">
-    <div class="metric-card green-accent">
-      <div class="mc-label"><span class="mico">🌐</span>Visitas ao Site (Landing Page)</div>
-      <div class="mc-val green">1.752</div>
-      <div class="mc-badge badge-green">R$ 0,41 por visita ao site</div>
-      <div class="mc-explain"><strong>1.752 pessoas carregaram o site</strong> da Psiviver após clicar no anúncio — a um custo de apenas R$ 0,41 cada. Esse é o <strong>resultado principal</strong> da campanha e a base do funil de leads.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">⏱️</span>Cliques que Chegaram ao Site</div>
-      <div class="mc-val">60<sup>%</sup></div>
-      <div class="mc-badge badge-amber">40% saíram antes de carregar</div>
-      <div class="mc-explain">De 2.938 cliques no link, <strong>1.752 (60%) esperaram o site carregar</strong>. Os 40% que saíram antes podem indicar <strong>página lenta ou pesada</strong> — otimizar a velocidade recupera tráfego já pago.</div>
-    </div>
-  </div>
-
-  <div class="ret-card" style="border-color:rgba(255,165,0,0.25);">
-    <div class="ret-title">📝 A Etapa que Falta Medir: da Visita ao Lead</div>
-    <div class="ret-sub">O objetivo final da campanha é <strong>gerar leads</strong> — pessoas que preenchem o formulário no site. Esta é a etapa a acompanhar de perto a partir de agora.</div>
-    <div style="font-size:13px; color:var(--mid); line-height:1.7;">
-      No período, o <strong>formulário de captação conectado a este painel não registrou novos leads</strong>, apesar das 1.752 visitas ao site. Isso normalmente aponta para um destes pontos — todos resolvíveis:
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
-        <div style="background:var(--blue-pale); border:1px solid var(--border); border-radius:12px; padding:14px; font-size:12.5px; line-height:1.55;">🔗 <strong>Destino do anúncio:</strong> confirmar se o link leva à <strong>página de captura com formulário</strong> — e não a uma página institucional sem formulário.</div>
-        <div style="background:var(--blue-pale); border:1px solid var(--border); border-radius:12px; padding:14px; font-size:12.5px; line-height:1.55;">🧲 <strong>Oferta/isca:</strong> a página precisa de um <strong>motivo claro</strong> para a pessoa deixar o contato (e-book, avaliação, agendamento).</div>
-        <div style="background:var(--blue-pale); border:1px solid var(--border); border-radius:12px; padding:14px; font-size:12.5px; line-height:1.55;">📲 <strong>Formulário:</strong> testar se está <strong>funcionando e visível</strong> logo no topo, principalmente no celular.</div>
-        <div style="background:var(--blue-pale); border:1px solid var(--border); border-radius:12px; padding:14px; font-size:12.5px; line-height:1.55;">📊 <strong>Rastreamento:</strong> garantir que os leads do site estão sendo <strong>gravados</strong> e aparecem no painel de Leads.</div>
-      </div>
-      <div style="margin-top:16px; padding-top:14px; border-top:1px solid rgba(47,127,192,0.08); font-size:12.5px;">💡 A boa notícia: o tráfego (a parte mais cara e difícil) já está <strong>excelente e barato</strong>. Ajustar a página de captura tende a destravar os leads rapidamente, aproveitando as visitas que já estão chegando.</div>
-    </div>
-  </div>
-
-  <!-- ══ ONDE OS ANÚNCIOS APARECEM ══ -->
-  <div class="stitle">
-    <div class="stitle-ico">📱</div>
-    <h3>Onde os Anúncios Apareceram</h3>
-    <div class="stitle-line"></div>
-  </div>
-
-  <div class="note-banner">
-    <span>📌</span>
-    <span>Um dado importante de Junho: quase todo o resultado veio do <strong>Facebook</strong>, não do Instagram.</span>
-  </div>
-
-  <div class="metrics-grid two">
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">📘</span>Facebook</div>
-      <div class="mc-val">94<sup>% dos cliques</sup></div>
-      <div class="mc-badge badge-blue">4.451 cliques · 65.929 exibições</div>
-      <div class="mc-explain">A <strong>grande maioria</strong> das exibições e cliques aconteceu no Facebook. É lá que o público desta campanha está ativo e clicando.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">📸</span>Instagram</div>
-      <div class="mc-val">6<sup>% dos cliques</sup></div>
-      <div class="mc-badge badge-teal">290 cliques · 9.957 exibições</div>
-      <div class="mc-explain">O Instagram teve participação pequena. Vale decidir se quer <strong>reforçar o Instagram</strong> ou concentrar no Facebook, que está trazendo cliques muito baratos.</div>
-    </div>
-  </div>
-
-  <!-- ══ ENVOLVIMENTO / VÍDEO ══ -->
+  <!-- ══ VÍDEO ══ -->
   <div class="stitle">
     <div class="stitle-ico green">🎬</div>
-    <h3>Envolvimento & Vídeo</h3>
+    <h3>O Vídeo do Anúncio</h3>
     <div class="stitle-line"></div>
-  </div>
-
-  <div class="metrics-grid four" style="margin-bottom:20px;">
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">💬</span>Engajamento</div>
-      <div class="mc-val" style="font-size:30px;">26.915</div>
-      <div class="mc-explain">Ações totais com a página.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">❤️</span>Reações</div>
-      <div class="mc-val" style="font-size:30px;">120</div>
-      <div class="mc-explain">Curtidas e reações.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">🔖</span>Salvamentos</div>
-      <div class="mc-val" style="font-size:30px;">16</div>
-      <div class="mc-explain">Conteúdo guardado.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">💬</span>Comentários</div>
-      <div class="mc-val" style="font-size:30px;">11</div>
-      <div class="mc-explain">Conversas nas publicações.</div>
-    </div>
   </div>
 
   <div class="ret-card">
-    <div class="ret-title">▶️ Retenção do Vídeo em Junho</div>
-    <div class="ret-sub">Partindo de <strong>23.829 reproduções</strong> (plays de 3s) — o maior volume da campanha até aqui.</div>
-    <div class="ret-row">
-      <div class="ret-row-header"><div class="ret-row-label">▶️ Reproduções (3s)</div><div class="ret-row-count">23.829</div></div>
+    <div class="ret-title">▶️ Quantas pessoas assistiram o vídeo</div>
+    <div class="ret-sub">O vídeo foi reproduzido <strong>23.829 vezes</strong> — o maior número da campanha. Veja quantas pessoas avançaram em cada parte.</div>
+    <div style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;"><span style="font-size:13px; font-weight:600; color:var(--dark);">▶️ Começaram a assistir</span><span style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--blue);">23.829</span></div>
       <div class="ret-bar"><div class="ret-fill" style="width:100%;"></div></div>
     </div>
-    <div class="ret-row">
-      <div class="ret-row-header"><div class="ret-row-label">📊 Assistiram 25%</div><div class="ret-row-count">11.058</div></div>
-      <div class="ret-bar"><div class="ret-fill" style="width:46.4%;"></div></div>
-      <div class="ret-row-pct">46% das reproduções</div>
-    </div>
-    <div class="ret-row">
-      <div class="ret-row-header"><div class="ret-row-label">📊 Assistiram 50%</div><div class="ret-row-count">5.643</div></div>
+    <div style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;"><span style="font-size:13px; font-weight:600; color:var(--dark);">📊 Assistiram até a metade</span><span style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--blue);">5.643</span></div>
       <div class="ret-bar"><div class="ret-fill" style="width:23.7%;"></div></div>
-      <div class="ret-row-pct">24% das reproduções</div>
     </div>
-    <div class="ret-row">
-      <div class="ret-row-header"><div class="ret-row-label">📊 Assistiram 75%</div><div class="ret-row-count">2.936</div></div>
-      <div class="ret-bar"><div class="ret-fill" style="width:12.3%;"></div></div>
-      <div class="ret-row-pct">12% das reproduções</div>
-    </div>
-    <div class="ret-row" style="margin-bottom:0;">
-      <div class="ret-row-header"><div class="ret-row-label">🏁 Assistiram 100%</div><div class="ret-row-count">1.183</div></div>
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;"><span style="font-size:13px; font-weight:600; color:var(--dark);">🏁 Assistiram até o fim</span><span style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--green);">1.183</span></div>
       <div class="ret-bar"><div class="ret-fill" style="width:5%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div>
-      <div class="ret-row-pct">5% chegaram ao fim</div>
     </div>
-    <div class="ret-explain">📌 A retenção em 25% (46%) é <strong>forte</strong> — quase metade dos que iniciam passam do primeiro quarto. O criativo prende bem a atenção nos primeiros segundos.</div>
   </div>
-
-  <div class="sep"></div>
 
   <!-- ══ PÚBLICO ══ -->
   <div class="stitle">
     <div class="stitle-ico green">🎯</div>
-    <h3>Público — Quem Está Clicando</h3>
+    <h3>Quem o Anúncio Alcançou</h3>
     <div class="stitle-line"></div>
   </div>
 
-  <div class="ret-card" style="margin-bottom:20px;">
-    <div class="ret-sub" style="margin-bottom:24px;">O público desta campanha é bem definido: <strong>mulheres 65+</strong> concentraram a maior parte dos cliques. Vale avaliar se é exatamente o público que a Psiviver quer converter em lead.</div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px;">
-
+  <div class="ret-card">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
       <!-- Gênero -->
       <div>
         <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Gênero</div>
@@ -592,137 +397,56 @@
           <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:6px;"><span>👨 Homens</span><span style="font-weight:700; color:var(--blue);">17%</span></div>
           <div class="ret-bar"><div class="ret-fill" style="width:17%;"></div></div>
         </div>
-        <div style="font-size:11px; color:var(--mid); margin-top:10px; line-height:1.5;">Público consistentemente feminino, como nos meses anteriores.</div>
       </div>
-
-      <!-- Faixa etária -->
-      <div>
-        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Faixa Etária (por cliques)</div>
-        <div style="margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🥇 65+ anos</span><span style="font-weight:700; color:var(--blue);">80%</span></div>
-          <div class="ret-bar"><div class="ret-fill" style="width:100%;"></div></div>
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🥈 55–64 anos</span><span style="font-weight:700; color:var(--blue);">11%</span></div>
-          <div class="ret-bar"><div class="ret-fill" style="width:22%;"></div></div>
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>🥉 45–54 anos</span><span style="font-weight:700; color:var(--blue);">4%</span></div>
-          <div class="ret-bar"><div class="ret-fill" style="width:10%;"></div></div>
-        </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:5px;"><span>4ª 25–34 anos</span><span style="font-weight:700; color:var(--blue);">2%</span></div>
-          <div class="ret-bar"><div class="ret-fill" style="width:6%;"></div></div>
-        </div>
-        <div style="font-size:11px; color:var(--mid); margin-top:10px; line-height:1.5;"><strong>Atenção:</strong> 80% dos cliques vêm de pessoas <strong>65+</strong>. Clique barato, mas é preciso validar se esse público gera <strong>lead qualificado</strong> para a Psiviver.</div>
-      </div>
-
       <!-- Regiões -->
       <div>
-        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Top Estados</div>
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); margin-bottom:16px;">Estados que mais viram</div>
         <div style="margin-bottom:8px;"><div style="font-size:12px; color:var(--mid); margin-bottom:4px;">🥇 São Paulo</div><div class="ret-bar"><div class="ret-fill" style="width:100%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
         <div style="margin-bottom:8px;"><div style="font-size:12px; color:var(--mid); margin-bottom:4px;">🥈 Rio Grande do Sul</div><div class="ret-bar"><div class="ret-fill" style="width:48%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
         <div style="margin-bottom:8px;"><div style="font-size:12px; color:var(--mid); margin-bottom:4px;">🥉 Minas Gerais</div><div class="ret-bar"><div class="ret-fill" style="width:36%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
-        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">4. Rio de Janeiro</div><div class="ret-bar"><div class="ret-fill" style="width:25%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
-        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">5. Paraná</div><div class="ret-bar"><div class="ret-fill" style="width:21%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
-        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">6. Ceará</div><div class="ret-bar"><div class="ret-fill" style="width:19%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
-        <div style="margin-bottom:8px;"><div style="font-size:11px; color:var(--mid); margin-bottom:4px;">7. Pernambuco</div><div class="ret-bar"><div class="ret-fill" style="width:15%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
-        <div style="font-size:11px; color:var(--mid); margin-top:10px; line-height:1.5;"><strong>São Paulo lidera</strong> com folga, seguido do Sul (RS, PR) e Sudeste (MG, RJ).</div>
+        <div><div style="font-size:12px; color:var(--mid); margin-bottom:4px;">4. Rio de Janeiro</div><div class="ret-bar"><div class="ret-fill" style="width:25%; background:linear-gradient(90deg,var(--green),var(--green2));"></div></div></div>
       </div>
     </div>
   </div>
 
   <div class="sep"></div>
 
-  <!-- ══ FINANCEIRO ══ -->
-  <div class="stitle">
-    <div class="stitle-ico">💳</div>
-    <h3>Financeiro — Investimento do Mês</h3>
-    <div class="stitle-line"></div>
-  </div>
-
-  <div class="note-banner">
-    <span>📌</span>
-    <span>Conta: <strong>PSIVIVER CA01</strong> · Campanha ativa a partir de <strong>15/jun</strong> (16 dias)</span>
-  </div>
-
-  <div class="metrics-grid two">
-    <div class="metric-card green-accent">
-      <div class="mc-label"><span class="mico">💰</span>Total Investido em Junho</div>
-      <div class="mc-val green">R$ 710,59</div>
-      <div class="mc-badge badge-blue">~R$ 44/dia · 16 dias ativos</div>
-      <div class="mc-explain">A campanha investiu <strong>R$ 710,59</strong> em meio mês. No ritmo atual (~R$ 44/dia), um mês cheio ficaria em torno de <strong>R$ 1.300</strong> — acima do orçamento de R$ 900, então vale calibrar o teto diário.</div>
-    </div>
-    <div class="metric-card">
-      <div class="mc-label"><span class="mico">📊</span>Custo por Resultado</div>
-      <div class="mc-val">R$ 0,41</div>
-      <div class="mc-badge badge-green">por visita ao site · R$ 0,15 por clique</div>
-      <div class="mc-explain">Cada visita ao site custou <strong>R$ 0,41</strong> e cada clique R$ 0,15 — os custos <strong>mais baixos</strong> de toda a campanha. Eficiência de mídia excelente.</div>
-    </div>
-  </div>
-
-  <!-- ══ RESUMO EXECUTIVO ══ -->
+  <!-- ══ RESUMO ══ -->
   <div class="stitle">
     <div class="stitle-ico">📝</div>
-    <h3>Resumo Executivo</h3>
+    <h3>Resumo do Mês</h3>
     <div class="stitle-line"></div>
   </div>
 
   <div class="summary">
-    <div class="sum-title">🧠 &nbsp; Análise Geral — Psiviver · Junho 2026</div>
-    <div class="sum-sub">Nova campanha de tráfego para o site estreou em 15/jun e entregou o melhor desempenho de mídia da história da conta: CPC de R$ 0,15, CTR de 6,25% e 1.752 visitas ao site a R$ 0,41 cada. O foco agora migra da mídia para a conversão: transformar essas visitas em leads.</div>
+    <div class="sum-title">🧠 &nbsp; Psiviver · Junho 2026</div>
+    <div class="sum-sub">Com R$ 710,59 investidos em 16 dias, a campanha levou 1.752 pessoas ao site a R$ 0,41 cada — o tráfego mais barato e eficiente da campanha até aqui.</div>
 
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kico">👥</div><div class="kl">Alcance</div><div class="kval">51.112</div><div class="kbadge">em 16 dias</div></div>
       <div class="kpi-card"><div class="kico">🌐</div><div class="kl">Visitas ao site</div><div class="kval green">1.752</div><div class="kbadge">R$ 0,41 cada</div></div>
-      <div class="kpi-card"><div class="kico">📈</div><div class="kl">CTR</div><div class="kval green">6,25%</div><div class="kbadge">recorde</div></div>
-      <div class="kpi-card"><div class="kico">💵</div><div class="kl">CPC</div><div class="kval">R$ 0,15</div><div class="kbadge">mais baixo de todos</div></div>
+      <div class="kpi-card"><div class="kico">👥</div><div class="kl">Alcance</div><div class="kval">51.112</div><div class="kbadge">pessoas</div></div>
+      <div class="kpi-card"><div class="kico">📈</div><div class="kl">Taxa de cliques</div><div class="kval green">6,25%</div><div class="kbadge">ótimo</div></div>
+      <div class="kpi-card"><div class="kico">💵</div><div class="kl">Custo por clique</div><div class="kval">R$ 0,15</div><div class="kbadge">muito baixo</div></div>
     </div>
 
     <div class="takeaways">
-      <div class="takeaway">
-        <div class="tico">🏆</div>
-        <div>
-          <div class="ttitle">Melhor Mídia da Conta</div>
-          <div class="tdesc">CPC R$ 0,15 e CTR 6,25% — <strong>recordes absolutos</strong>. A campanha de site trouxe o tráfego mais barato e eficiente já registrado.</div>
-        </div>
-      </div>
-      <div class="takeaway">
-        <div class="tico">🌐</div>
-        <div>
-          <div class="ttitle">1.752 Visitas ao Site</div>
-          <div class="tdesc">O topo do funil de leads está <strong>abastecido e barato</strong>. Muita gente qualificada chegando à página — matéria-prima para gerar leads.</div>
-        </div>
-      </div>
-      <div class="takeaway">
-        <div class="tico">⚠️</div>
-        <div>
-          <div class="ttitle">Falta Fechar o Funil</div>
-          <div class="tdesc">O formulário não registrou leads no período. <strong>Ajustar a página de captura</strong> é a prioridade — o tráfego já está pronto e esperando.</div>
-        </div>
-      </div>
+      <div class="takeaway"><div class="tico">🌐</div><div><div class="ttitle">1.752 Visitas ao Site</div><div class="tdesc">O objetivo da campanha foi cumprido: <strong>muita gente chegando ao site</strong>, a um custo baixíssimo por visita.</div></div></div>
+      <div class="takeaway"><div class="tico">💵</div><div><div class="ttitle">Tráfego Mais Barato</div><div class="tdesc">Custo por clique de <strong>R$ 0,15</strong> — o menor de toda a campanha. Cada real rendeu muitas visitas.</div></div></div>
+      <div class="takeaway"><div class="tico">📈</div><div><div class="ttitle">Ótima Taxa de Cliques</div><div class="tdesc">CTR de <strong>6,25%</strong> mostra que o anúncio chamou muita atenção do público.</div></div></div>
     </div>
   </div>
 
   <!-- ══ RECOMENDAÇÕES ══ -->
   <div class="stitle">
     <div class="stitle-ico green">🚀</div>
-    <h3>Recomendações para Julho</h3>
+    <h3>Próximos Passos</h3>
     <div class="stitle-line"></div>
   </div>
 
   <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:40px;">
-    <div style="background:linear-gradient(135deg, rgba(214,69,80,0.05), rgba(255,120,0,0.05)); border:1px solid rgba(214,69,80,0.18); border-radius:16px; padding:22px; display:flex; gap:16px; align-items:flex-start;">
-      <div style="font-size:28px; flex-shrink:0;">🎯</div>
-      <div>
-        <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--dark); margin-bottom:6px;">PRIORIDADE: destravar os leads no site</div>
-        <div style="font-size:13px; color:var(--mid); line-height:1.6;">Confirmar que o anúncio leva a uma <strong>página de captura com formulário funcionando</strong>, com uma oferta clara e o campo visível no topo (principalmente no celular). O tráfego já está barato e volumoso — falta a página converter.</div>
-      </div>
-    </div>
-    <div class="takeaway"><div class="tico">⚡</div><div><div class="ttitle">Acelerar a landing page</div><div class="tdesc">40% dos cliques saíram antes do site carregar. Uma <strong>página mais leve e rápida</strong> recupera visitas já pagas.</div></div></div>
-    <div class="takeaway"><div class="tico">👵</div><div><div class="ttitle">Validar o público 65+</div><div class="tdesc">80% dos cliques são de <strong>65+</strong>. Clique barato, mas testar limitar a idade (ex.: 30–60) pode trazer leads mais qualificados.</div></div></div>
-    <div class="takeaway"><div class="tico">📘</div><div><div class="ttitle">Decidir Facebook × Instagram</div><div class="tdesc">94% dos cliques vêm do <strong>Facebook</strong>. Aceitar o FB barato ou testar um conjunto só para Instagram — a definir conforme o público-alvo.</div></div></div>
-    <div class="takeaway"><div class="tico">💰</div><div><div class="ttitle">Calibrar o orçamento</div><div class="tdesc">No ritmo atual o mês fecharia ~R$ 1.300. Ajustar o teto diário para manter o gasto dentro dos <strong>R$ 900</strong> planejados.</div></div></div>
+    <div class="takeaway"><div class="tico">📈</div><div><div class="ttitle">Aumentar o investimento aos poucos</div><div class="tdesc">Com o custo por visita tão baixo, <strong>subir a verba gradualmente</strong> tende a trazer ainda mais visitas ao site.</div></div></div>
+    <div class="takeaway"><div class="tico">🎬</div><div><div class="ttitle">Manter os criativos que funcionam</div><div class="tdesc">Os anúncios de Junho trouxeram cliques muito baratos. <strong>Manter a linha atual</strong> e testar novas variações.</div></div></div>
+    <div class="takeaway"><div class="tico">📍</div><div><div class="ttitle">Continuar forte em SP, RS e MG</div><div class="tdesc">São os estados que mais responderam. <strong>Seguir presente</strong> nessas regiões.</div></div></div>
   </div>
 
 </div>
@@ -734,7 +458,7 @@
     Junho 2026 · Gestor: Balla (O Criativo Marketing)
   </div>
   <div class="ft-c">
-    Psiviver · Campanha de Tráfego para o Site<br>
+    Psiviver · Campanha de Visitas ao Site<br>
     <small style="color:rgba(255,255,255,0.2)">Documento confidencial · Uso interno</small>
   </div>
   <div>
