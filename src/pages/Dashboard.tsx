@@ -17,6 +17,7 @@ const REPORT_MONTHS = [
   { key: 'marco', label: 'Março 2026', src: '/reports/relatorio-marco-2026.html' },
   { key: 'abril', label: 'Abril 2026', src: '/reports/relatorio-abril-2026.html' },
   { key: 'maio', label: 'Maio 2026', src: '/reports/relatorio-maio-2026.html' },
+  { key: 'junho', label: 'Junho 2026', src: '/reports/relatorio-junho-2026.html' },
 ] as const;
 
 const ReportTabs = () => {
